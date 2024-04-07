@@ -31,7 +31,7 @@
     NSURL *url = [NSURL fileURLWithPath:self.path];
 
     NSDictionary *settings = @{
-        AVVideoCodecKey: AVVideoCodecH264,
+        AVVideoCodecKey: AVVideoCodecTypeH264,
         AVVideoWidthKey: @(width),
         AVVideoHeightKey: @(height),
         AVVideoCompressionPropertiesKey: @{
