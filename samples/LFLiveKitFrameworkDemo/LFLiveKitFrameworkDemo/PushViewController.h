@@ -8,8 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SecondViewController : UIViewController
+@class LFLivePreview;
+@interface PushViewController : UIViewController
 
+@property (nonatomic,strong) NSString *server;
+
+- (void)commonInit;
+
+- (LFLivePreview *)liveView;
 
 @end
 

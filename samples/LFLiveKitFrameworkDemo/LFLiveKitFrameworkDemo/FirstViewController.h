@@ -6,9 +6,9 @@
 //  Copyright © 2016年 admin. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "PushViewController.h"
 
-@interface FirstViewController : UIViewController
+@interface FirstViewController : PushViewController
 
 
 @end

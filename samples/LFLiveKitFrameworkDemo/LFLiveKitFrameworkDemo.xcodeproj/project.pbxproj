@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		843591661DD201D200811FC7 /* LFLiveKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8495F6CE1DB8F37E00542124 /* LFLiveKit.framework */; };
+		33D50D3762D4094CF699422E /* libPods-LFLiveKitFrameworkDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F8BC7E99B485E5C62C6E501 /* libPods-LFLiveKitFrameworkDemo.a */; };
 		8495F6B01DB8F37300542124 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8495F6AF1DB8F37300542124 /* main.m */; };
 		8495F6B31DB8F37300542124 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8495F6B21DB8F37300542124 /* AppDelegate.m */; };
 		8495F6B61DB8F37300542124 /* FirstViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8495F6B51DB8F37300542124 /* FirstViewController.m */; };
-		8495F6B91DB8F37300542124 /* SecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8495F6B81DB8F37300542124 /* SecondViewController.m */; };
+		8495F6B91DB8F37300542124 /* PushViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8495F6B81DB8F37300542124 /* PushViewController.m */; };
 		8495F6BC1DB8F37300542124 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8495F6BA1DB8F37300542124 /* Main.storyboard */; };
 		8495F6BE1DB8F37300542124 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8495F6BD1DB8F37300542124 /* Assets.xcassets */; };
 		8495F6C11DB8F37300542124 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8495F6BF1DB8F37300542124 /* LaunchScreen.storyboard */; };
@@ -27,7 +27,6 @@
 		84D0035F1DB8F7FA00560583 /* close_preview@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 84D003521DB8F7FA00560583 /* close_preview@3x.png */; };
 		84D003601DB8F7FA00560583 /* ios-29x29.png in Resources */ = {isa = PBXBuildFile; fileRef = 84D003531DB8F7FA00560583 /* ios-29x29.png */; };
 		84D003611DB8F7FA00560583 /* LFLivePreview.m in Sources */ = {isa = PBXBuildFile; fileRef = 84D003551DB8F7FA00560583 /* LFLivePreview.m */; };
-		84D003641DB8F83400560583 /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 84D003631DB8F83400560583 /* libstdc++.tbd */; };
 		84D0036A1DB8F85E00560583 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84D003691DB8F85E00560583 /* VideoToolbox.framework */; };
 		84D0036C1DB8F86700560583 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84D0036B1DB8F86700560583 /* AudioToolbox.framework */; };
 		84D0036E1DB8F86D00560583 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84D0036D1DB8F86D00560583 /* AVFoundation.framework */; };
@@ -35,45 +34,34 @@
 		84D003731DB8F8C200560583 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84D003721DB8F8C200560583 /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		843591641DD201CC00811FC7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8495F6C81DB8F37E00542124 /* LFLiveKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8495F66A1DB8F14600542124;
-			remoteInfo = LFLiveKitFramework;
+/* Begin PBXCopyFilesBuildPhase section */
+		4DE6BD7F2BBD30D600A2BCD6 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8495F6CD1DB8F37E00542124 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8495F6C81DB8F37E00542124 /* LFLiveKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 84D8B3901D7574D600752B56;
-			remoteInfo = LFLiveKit;
-		};
-		8495F6CF1DB8F37E00542124 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8495F6C81DB8F37E00542124 /* LFLiveKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8495F66B1DB8F14600542124;
-			remoteInfo = LFLiveKitFramework;
-		};
-/* End PBXContainerItemProxy section */
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		843591671DD204FA00811FC7 /* libstdc++.6.0.9.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.6.0.9.tbd"; path = "usr/lib/libstdc++.6.0.9.tbd"; sourceTree = SDKROOT; };
+		0F8BC7E99B485E5C62C6E501 /* libPods-LFLiveKitFrameworkDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LFLiveKitFrameworkDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		551FD083B5C2679528D42844 /* Pods-LFLiveKitFrameworkDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LFLiveKitFrameworkDemo.debug.xcconfig"; path = "Target Support Files/Pods-LFLiveKitFrameworkDemo/Pods-LFLiveKitFrameworkDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		8495F6AB1DB8F37300542124 /* LFLiveKitFrameworkDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LFLiveKitFrameworkDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8495F6AF1DB8F37300542124 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		8495F6B11DB8F37300542124 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		8495F6B21DB8F37300542124 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		8495F6B41DB8F37300542124 /* FirstViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FirstViewController.h; sourceTree = "<group>"; };
 		8495F6B51DB8F37300542124 /* FirstViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FirstViewController.m; sourceTree = "<group>"; };
-		8495F6B71DB8F37300542124 /* SecondViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecondViewController.h; sourceTree = "<group>"; };
-		8495F6B81DB8F37300542124 /* SecondViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SecondViewController.m; sourceTree = "<group>"; };
+		8495F6B71DB8F37300542124 /* PushViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PushViewController.h; sourceTree = "<group>"; };
+		8495F6B81DB8F37300542124 /* PushViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PushViewController.m; sourceTree = "<group>"; };
 		8495F6BB1DB8F37300542124 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8495F6BD1DB8F37300542124 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8495F6C01DB8F37300542124 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8495F6C21DB8F37300542124 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8495F6C81DB8F37E00542124 /* LFLiveKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LFLiveKit.xcodeproj; path = ../../FrameWork/LFLiveKit.xcodeproj; sourceTree = "<group>"; };
 		8495F6D51DB8F49800542124 /* GPUImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GPUImage.framework; path = vendors/GPUImage.framework; sourceTree = "<group>"; };
 		8495F6D61DB8F49800542124 /* pili-librtmp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "pili-librtmp.framework"; path = "vendors/pili-librtmp.framework"; sourceTree = "<group>"; };
 		84D003461DB8F7FA00560583 /* UIControl+YYAdd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+YYAdd.h"; sourceTree = "<group>"; };
@@ -91,7 +79,6 @@
 		84D003531DB8F7FA00560583 /* ios-29x29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ios-29x29.png"; sourceTree = "<group>"; };
 		84D003541DB8F7FA00560583 /* LFLivePreview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFLivePreview.h; sourceTree = "<group>"; };
 		84D003551DB8F7FA00560583 /* LFLivePreview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LFLivePreview.m; sourceTree = "<group>"; };
-		84D003631DB8F83400560583 /* libstdc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.tbd"; path = "usr/lib/libstdc++.tbd"; sourceTree = SDKROOT; };
 		84D003651DB8F84000560583 /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		84D003671DB8F84800560583 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		84D003691DB8F85E00560583 /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
@@ -99,6 +86,7 @@
 		84D0036D1DB8F86D00560583 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		84D003701DB8F8BD00560583 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		84D003721DB8F8C200560583 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		B15BA2ADA58B8E691C79FADF /* Pods-LFLiveKitFrameworkDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LFLiveKitFrameworkDemo.release.xcconfig"; path = "Target Support Files/Pods-LFLiveKitFrameworkDemo/Pods-LFLiveKitFrameworkDemo.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,26 +94,34 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				843591661DD201D200811FC7 /* LFLiveKit.framework in Frameworks */,
 				84D003731DB8F8C200560583 /* Foundation.framework in Frameworks */,
 				84D003711DB8F8BD00560583 /* UIKit.framework in Frameworks */,
 				84D0036E1DB8F86D00560583 /* AVFoundation.framework in Frameworks */,
 				84D0036C1DB8F86700560583 /* AudioToolbox.framework in Frameworks */,
 				84D0036A1DB8F85E00560583 /* VideoToolbox.framework in Frameworks */,
-				84D003641DB8F83400560583 /* libstdc++.tbd in Frameworks */,
+				33D50D3762D4094CF699422E /* libPods-LFLiveKitFrameworkDemo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		30C0D19928F1C77BFA04D2B7 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				551FD083B5C2679528D42844 /* Pods-LFLiveKitFrameworkDemo.debug.xcconfig */,
+				B15BA2ADA58B8E691C79FADF /* Pods-LFLiveKitFrameworkDemo.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		8495F6A21DB8F37300542124 = {
 			isa = PBXGroup;
 			children = (
-				8495F6C81DB8F37E00542124 /* LFLiveKit.xcodeproj */,
 				8495F6AD1DB8F37300542124 /* LFLiveKitFrameworkDemo */,
 				8495F6AC1DB8F37300542124 /* Products */,
 				8495F6D41DB8F49800542124 /* Frameworks */,
+				30C0D19928F1C77BFA04D2B7 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -144,8 +140,8 @@
 				8495F6B21DB8F37300542124 /* AppDelegate.m */,
 				8495F6B41DB8F37300542124 /* FirstViewController.h */,
 				8495F6B51DB8F37300542124 /* FirstViewController.m */,
-				8495F6B71DB8F37300542124 /* SecondViewController.h */,
-				8495F6B81DB8F37300542124 /* SecondViewController.m */,
+				8495F6B71DB8F37300542124 /* PushViewController.h */,
+				8495F6B81DB8F37300542124 /* PushViewController.m */,
 				84D003451DB8F7FA00560583 /* category */,
 				84D0034A1DB8F7FA00560583 /* images */,
 				84D003541DB8F7FA00560583 /* LFLivePreview.h */,
@@ -167,19 +163,9 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		8495F6C91DB8F37E00542124 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				8495F6CE1DB8F37E00542124 /* LFLiveKit.framework */,
-				8495F6D01DB8F37E00542124 /* LFLiveKit.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		8495F6D41DB8F49800542124 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				843591671DD204FA00811FC7 /* libstdc++.6.0.9.tbd */,
 				84D003721DB8F8C200560583 /* Foundation.framework */,
 				84D003701DB8F8BD00560583 /* UIKit.framework */,
 				84D0036D1DB8F86D00560583 /* AVFoundation.framework */,
@@ -187,9 +173,9 @@
 				84D003691DB8F85E00560583 /* VideoToolbox.framework */,
 				84D003671DB8F84800560583 /* libz.tbd */,
 				84D003651DB8F84000560583 /* libresolv.tbd */,
-				84D003631DB8F83400560583 /* libstdc++.tbd */,
 				8495F6D51DB8F49800542124 /* GPUImage.framework */,
 				8495F6D61DB8F49800542124 /* pili-librtmp.framework */,
+				0F8BC7E99B485E5C62C6E501 /* libPods-LFLiveKitFrameworkDemo.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -228,14 +214,15 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8495F6C51DB8F37300542124 /* Build configuration list for PBXNativeTarget "LFLiveKitFrameworkDemo" */;
 			buildPhases = (
+				8B182AB93BCECC3980CD0DD7 /* [CP] Check Pods Manifest.lock */,
 				8495F6A71DB8F37300542124 /* Sources */,
 				8495F6A81DB8F37300542124 /* Frameworks */,
 				8495F6A91DB8F37300542124 /* Resources */,
+				4DE6BD7F2BBD30D600A2BCD6 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				843591651DD201CC00811FC7 /* PBXTargetDependency */,
 			);
 			name = LFLiveKitFrameworkDemo;
 			productName = LFLiveKitFrameworkDemo;
@@ -253,7 +240,7 @@
 				TargetAttributes = {
 					8495F6AA1DB8F37300542124 = {
 						CreatedOnToolsVersion = 8.0;
-						DevelopmentTeam = G497YX6CBT;
+						DevelopmentTeam = 5KC8JMR7MN;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -263,41 +250,19 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
 			mainGroup = 8495F6A21DB8F37300542124;
 			productRefGroup = 8495F6AC1DB8F37300542124 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 8495F6C91DB8F37E00542124 /* Products */;
-					ProjectRef = 8495F6C81DB8F37E00542124 /* LFLiveKit.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				8495F6AA1DB8F37300542124 /* LFLiveKitFrameworkDemo */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		8495F6CE1DB8F37E00542124 /* LFLiveKit.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = LFLiveKit.framework;
-			remoteRef = 8495F6CD1DB8F37E00542124 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8495F6D01DB8F37E00542124 /* LFLiveKit.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = LFLiveKit.framework;
-			remoteRef = 8495F6CF1DB8F37E00542124 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8495F6A91DB8F37300542124 /* Resources */ = {
@@ -321,13 +286,38 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		8B182AB93BCECC3980CD0DD7 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-LFLiveKitFrameworkDemo-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		8495F6A71DB8F37300542124 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				84D003561DB8F7FA00560583 /* UIControl+YYAdd.m in Sources */,
-				8495F6B91DB8F37300542124 /* SecondViewController.m in Sources */,
+				8495F6B91DB8F37300542124 /* PushViewController.m in Sources */,
 				84D003571DB8F7FA00560583 /* UIView+YYAdd.m in Sources */,
 				8495F6B31DB8F37300542124 /* AppDelegate.m in Sources */,
 				84D003611DB8F7FA00560583 /* LFLivePreview.m in Sources */,
@@ -337,14 +327,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		843591651DD201CC00811FC7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = LFLiveKitFramework;
-			targetProxy = 843591641DD201CC00811FC7 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		8495F6BA1DB8F37300542124 /* Main.storyboard */ = {
@@ -406,7 +388,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -447,7 +429,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -456,38 +438,28 @@
 		};
 		8495F6C61DB8F37300542124 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 551FD083B5C2679528D42844 /* Pods-LFLiveKitFrameworkDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = G497YX6CBT;
+				DEVELOPMENT_TEAM = 5KC8JMR7MN;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = LFLiveKitFrameworkDemo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-ObjC",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.youku.LFLiveKitFrameworkDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mk.youku.LFLiveKitFrameworkDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
 		8495F6C71DB8F37300542124 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B15BA2ADA58B8E691C79FADF /* Pods-LFLiveKitFrameworkDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = G497YX6CBT;
+				DEVELOPMENT_TEAM = 5KC8JMR7MN;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = LFLiveKitFrameworkDemo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-ObjC",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.youku.LFLiveKitFrameworkDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mk.youku.LFLiveKitFrameworkDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

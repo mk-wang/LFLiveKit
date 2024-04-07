@@ -9,7 +9,7 @@
 #import "LFLivePreview.h"
 #import "UIControl+YYAdd.h"
 #import "UIView+YYAdd.h"
-#import <LFLiveKit/LFLiveKitFramework.h>
+#import <LFLiveKit/LFLiveKit.h>
 
 inline static NSString *formatedSpeed(float bytes, float elapsed_milli) {
     if (elapsed_milli <= 0) {
@@ -346,7 +346,7 @@ inline static NSString *formatedSpeed(float bytes, float elapsed_milli) {
         _startLiveButton = [UIButton new];
         _startLiveButton.size = CGSizeMake(self.width - 60, 44);
         _startLiveButton.left = 30;
-        _startLiveButton.bottom = self.height - 50;
+        _startLiveButton.bottom = self.height - 100;
         _startLiveButton.layer.cornerRadius = _startLiveButton.height/2;
         [_startLiveButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [_startLiveButton.titleLabel setFont:[UIFont systemFontOfSize:16]];
@@ -359,7 +359,7 @@ inline static NSString *formatedSpeed(float bytes, float elapsed_milli) {
             if (_self.startLiveButton.selected) {
                 [_self.startLiveButton setTitle:@"结束直播" forState:UIControlStateNormal];
                 LFLiveStreamInfo *stream = [LFLiveStreamInfo new];
-                stream.url = @"rtmp://live.hkstv.hk.lxdns.com:1935/live/stream153";
+                stream.url = _self.pushURL;
                 [_self.session startLive:stream];
             } else {
                 [_self.startLiveButton setTitle:@"开始直播" forState:UIControlStateNormal];
@@ -368,6 +368,10 @@ inline static NSString *formatedSpeed(float bytes, float elapsed_milli) {
         }];
     }
     return _startLiveButton;
+}
+
+- (void)stopLive {
+    [_session stopLive];
 }
 
 @end

@@ -10,4 +10,8 @@
 
 @interface LFLivePreview : UIView
 
+@property (nonatomic,strong) NSString *pushURL;
+
+- (void)stopLive;
+
 @end
