@@ -14,7 +14,7 @@
 #pragma mark-- LifyCycle
 + (instancetype)defaultConfiguration
 {
-    LFLiveAudioConfiguration *audioConfig = [LFLiveAudioConfiguration defaultConfigurationForQuality:LFLiveAudioQuality_Default];
+    LFLiveAudioConfiguration *audioConfig = [LFLiveAudioConfiguration defaultConfigurationForQuality:LFLiveAudioQualityDefault];
     return audioConfig;
 }
 
@@ -23,25 +23,25 @@
     LFLiveAudioConfiguration *audioConfig = [LFLiveAudioConfiguration new];
     audioConfig.numberOfChannels = 2;
     switch (audioQuality) {
-    case LFLiveAudioQuality_Low: {
-        audioConfig.audioBitrate = audioConfig.numberOfChannels == 1 ? LFLiveAudioBitRate_32Kbps : LFLiveAudioBitRate_64Kbps;
-        audioConfig.audioSampleRate = LFLiveAudioSampleRate_16000Hz;
+    case LFLiveAudioQualityLow: {
+        audioConfig.audioBitrate = audioConfig.numberOfChannels == 1 ? LFLiveAudioBitRate32Kbps : LFLiveAudioBitRate64Kbps;
+        audioConfig.audioSampleRate = LFLiveAudioSampleRate16000Hz;
     } break;
-    case LFLiveAudioQuality_Medium: {
-        audioConfig.audioBitrate = LFLiveAudioBitRate_96Kbps;
-        audioConfig.audioSampleRate = LFLiveAudioSampleRate_44100Hz;
+    case LFLiveAudioQualityMedium: {
+        audioConfig.audioBitrate = LFLiveAudioBitRate96Kbps;
+        audioConfig.audioSampleRate = LFLiveAudioSampleRate44100Hz;
     } break;
-    case LFLiveAudioQuality_High: {
-        audioConfig.audioBitrate = LFLiveAudioBitRate_128Kbps;
-        audioConfig.audioSampleRate = LFLiveAudioSampleRate_44100Hz;
+    case LFLiveAudioQualityHigh: {
+        audioConfig.audioBitrate = LFLiveAudioBitRate128Kbps;
+        audioConfig.audioSampleRate = LFLiveAudioSampleRate44100Hz;
     } break;
-    case LFLiveAudioQuality_VeryHigh: {
-        audioConfig.audioBitrate = LFLiveAudioBitRate_128Kbps;
-        audioConfig.audioSampleRate = LFLiveAudioSampleRate_48000Hz;
+    case LFLiveAudioQualityVeryHigh: {
+        audioConfig.audioBitrate = LFLiveAudioBitRate128Kbps;
+        audioConfig.audioSampleRate = LFLiveAudioSampleRate48000Hz;
     } break;
     default: {
-        audioConfig.audioBitrate = LFLiveAudioBitRate_96Kbps;
-        audioConfig.audioSampleRate = LFLiveAudioSampleRate_44100Hz;
+        audioConfig.audioBitrate = LFLiveAudioBitRate96Kbps;
+        audioConfig.audioSampleRate = LFLiveAudioSampleRate44100Hz;
     } break;
     }
 

@@ -11,41 +11,41 @@
 /// 音频码率 (默认96Kbps)
 typedef NS_ENUM(NSUInteger, LFLiveAudioBitRate) {
     /// 32Kbps 音频码率
-    LFLiveAudioBitRate_32Kbps = 32000,
+    LFLiveAudioBitRate32Kbps = 32000,
     /// 64Kbps 音频码率
-    LFLiveAudioBitRate_64Kbps = 64000,
+    LFLiveAudioBitRate64Kbps = 64000,
     /// 96Kbps 音频码率
-    LFLiveAudioBitRate_96Kbps = 96000,
+    LFLiveAudioBitRate96Kbps = 96000,
     /// 128Kbps 音频码率
-    LFLiveAudioBitRate_128Kbps = 128000,
+    LFLiveAudioBitRate128Kbps = 128000,
     /// 默认音频码率，默认为 96Kbps
-    LFLiveAudioBitRate_Default = LFLiveAudioBitRate_96Kbps
+    LFLiveAudioBitRateDefault = LFLiveAudioBitRate96Kbps
 };
 
 /// 音频采样率 (默认44.1KHz)
 typedef NS_ENUM(NSUInteger, LFLiveAudioSampleRate) {
     /// 16KHz 采样率
-    LFLiveAudioSampleRate_16000Hz = 16000,
+    LFLiveAudioSampleRate16000Hz = 16000,
     /// 44.1KHz 采样率
-    LFLiveAudioSampleRate_44100Hz = 44100,
+    LFLiveAudioSampleRate44100Hz = 44100,
     /// 48KHz 采样率
-    LFLiveAudioSampleRate_48000Hz = 48000,
+    LFLiveAudioSampleRate48000Hz = 48000,
     /// 默认音频采样率，默认为 44.1KHz
-    LFLiveAudioSampleRate_Default = LFLiveAudioSampleRate_44100Hz
+    LFLiveAudioSampleRateDefault = LFLiveAudioSampleRate44100Hz
 };
 
 ///  Audio Live quality（音频质量）
 typedef NS_ENUM(NSUInteger, LFLiveAudioQuality) {
     /// 低音频质量 audio sample rate: 16KHz audio bitrate: numberOfChannels 1 : 32Kbps  2 : 64Kbps
-    LFLiveAudioQuality_Low = 0,
+    LFLiveAudioQualityLow = 0,
     /// 中音频质量 audio sample rate: 44.1KHz audio bitrate: 96Kbps
-    LFLiveAudioQuality_Medium = 1,
+    LFLiveAudioQualityMedium = 1,
     /// 高音频质量 audio sample rate: 44.1MHz audio bitrate: 128Kbps
-    LFLiveAudioQuality_High = 2,
+    LFLiveAudioQualityHigh = 2,
     /// 超高音频质量 audio sample rate: 48KHz, audio bitrate: 128Kbps
-    LFLiveAudioQuality_VeryHigh = 3,
+    LFLiveAudioQualityVeryHigh = 3,
     /// 默认音频质量 audio sample rate: 44.1KHz, audio bitrate: 96Kbps
-    LFLiveAudioQuality_Default = LFLiveAudioQuality_High
+    LFLiveAudioQualityDefault = LFLiveAudioQualityHigh
 };
 
 @interface LFLiveAudioConfiguration : NSObject <NSCoding, NSCopying>

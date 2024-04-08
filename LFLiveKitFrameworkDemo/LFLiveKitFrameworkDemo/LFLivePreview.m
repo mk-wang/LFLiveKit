@@ -161,7 +161,7 @@ inline static NSString *formatedSpeed(float bytes, float elapsed_milli)
 {
     if (!_session) {
 
-        LFLiveAudioConfiguration *audioConfiguration = [LFLiveAudioConfiguration defaultConfigurationForQuality:LFLiveAudioQuality_High];
+        LFLiveAudioConfiguration *audioConfiguration = [LFLiveAudioConfiguration defaultConfigurationForQuality:LFLiveAudioQualityHigh];
 
         LFLiveVideoConfiguration *videoConfiguration = [LFLiveVideoConfiguration defaultConfigurationForQuality:makeQuality(YES, LFCaptureSessionPreset720x1280)];
 
