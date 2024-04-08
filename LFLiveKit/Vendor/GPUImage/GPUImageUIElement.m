@@ -1,10 +1,9 @@
 #import "GPUImageUIElement.h"
 
-@interface GPUImageUIElement ()
-{
+@interface GPUImageUIElement () {
     UIView *view;
     CALayer *layer;
-    
+
     CGSize previousLayerSizeInPixels;
     CMTime time;
     NSTimeInterval actualTimeOfLastUpdate;
@@ -19,27 +18,25 @@
 
 - (id)initWithView:(UIView *)inputView;
 {
-    if (!(self = [super init]))
-    {
-		return nil;
+    if (!(self = [super init])) {
+        return nil;
     }
-    
+
     view = inputView;
     layer = inputView.layer;
 
     previousLayerSizeInPixels = CGSizeZero;
     [self update];
-    
+
     return self;
 }
 
 - (id)initWithLayer:(CALayer *)inputLayer;
 {
-    if (!(self = [super init]))
-    {
-		return nil;
+    if (!(self = [super init])) {
+        return nil;
     }
-    
+
     view = nil;
     layer = inputLayer;
 
@@ -65,7 +62,7 @@
 
 - (void)updateUsingCurrentTime;
 {
-    if(CMTIME_IS_INVALID(time)) {
+    if (CMTIME_IS_INVALID(time)) {
         time = CMTimeMakeWithSeconds(0, 600);
         actualTimeOfLastUpdate = [NSDate timeIntervalSinceReferenceDate];
     } else {
@@ -81,39 +78,37 @@
 - (void)updateWithTimestamp:(CMTime)frameTime;
 {
     [GPUImageContext useImageProcessingContext];
-    
+
     CGSize layerPixelSize = [self layerSizeInPixels];
-    
-    GLubyte *imageData = (GLubyte *) calloc(1, (int)layerPixelSize.width * (int)layerPixelSize.height * 4);
-    
+
+    GLubyte *imageData = (GLubyte *)calloc(1, (int)layerPixelSize.width * (int)layerPixelSize.height * 4);
+
     CGColorSpaceRef genericRGBColorspace = CGColorSpaceCreateDeviceRGB();
-    CGContextRef imageContext = CGBitmapContextCreate(imageData, (int)layerPixelSize.width, (int)layerPixelSize.height, 8, (int)layerPixelSize.width * 4, genericRGBColorspace,  kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
+    CGContextRef imageContext = CGBitmapContextCreate(imageData, (int)layerPixelSize.width, (int)layerPixelSize.height, 8, (int)layerPixelSize.width * 4, genericRGBColorspace, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
     //    CGContextRotateCTM(imageContext, M_PI_2);
     CGContextTranslateCTM(imageContext, 0.0f, layerPixelSize.height);
     CGContextScaleCTM(imageContext, layer.contentsScale, -layer.contentsScale);
     //        CGContextSetBlendMode(imageContext, kCGBlendModeCopy); // From Technical Q&A QA1708: http://developer.apple.com/library/ios/#qa/qa1708/_index.html
-    
+
     [layer renderInContext:imageContext];
-    
+
     CGContextRelease(imageContext);
     CGColorSpaceRelease(genericRGBColorspace);
-    
+
     // TODO: This may not work
     outputFramebuffer = [[GPUImageContext sharedFramebufferCache] fetchFramebufferForSize:layerPixelSize textureOptions:self.outputTextureOptions onlyTexture:YES];
     [outputFramebuffer disableReferenceCounting]; // Add this line, because GPUImageTwoInputFilter.m frametime updatedMovieFrameOppositeStillImage is YES, but the secondbuffer not lock
-    
+
     glBindTexture(GL_TEXTURE_2D, [outputFramebuffer texture]);
     // no need to use self.outputTextureOptions here, we always need these texture options
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (int)layerPixelSize.width, (int)layerPixelSize.height, 0, GL_BGRA, GL_UNSIGNED_BYTE, imageData);
-    
+
     free(imageData);
-    for (id<GPUImageInput> currentTarget in targets)
-    {
-        if (currentTarget != self.targetToIgnoreForUpdates)
-        {
+    for (id<GPUImageInput> currentTarget in targets) {
+        if (currentTarget != self.targetToIgnoreForUpdates) {
             NSInteger indexOfObject = [targets indexOfObject:currentTarget];
             NSInteger textureIndexOfTarget = [[targetTextureIndices objectAtIndex:indexOfObject] integerValue];
-            
+
             [currentTarget setInputSize:layerPixelSize atIndex:textureIndexOfTarget];
             [currentTarget setInputFramebuffer:outputFramebuffer atIndex:textureIndexOfTarget]; // add this line, because the outputFramebuffer is update above
             [currentTarget newFrameReadyAtTime:frameTime atIndex:textureIndexOfTarget];

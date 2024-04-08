@@ -8,8 +8,6 @@
 //
 // Copyright (c) GDCL 2004-2008 http://www.gdcl.co.uk/license.htm
 
-
-
 #pragma once
 
 typedef unsigned char BYTE;
@@ -22,21 +20,24 @@ class LFNALUnit
 {
 public:
     LFNALUnit();
-    LFNALUnit(const BYTE* pStart, int len){
+    LFNALUnit(const BYTE *pStart, int len)
+    {
         m_pStart = m_pStartCodeStart = pStart;
         m_cBytes = len;
         ResetBitstream();
     }
-    virtual ~LFNALUnit() {
+    virtual ~LFNALUnit()
+    {
     }
 
     // assignment copies a pointer into a fixed buffer managed elsewhere. We do not copy the data
-    LFNALUnit(const LFNALUnit &r){
+    LFNALUnit(const LFNALUnit &r)
+    {
         m_pStart = r.m_pStart;
         m_cBytes = r.m_cBytes;
         ResetBitstream();
     }
-    const LFNALUnit& operator = (const LFNALUnit &r)
+    const LFNALUnit &operator=(const LFNALUnit &r)
     {
         m_pStart = r.m_pStart;
         m_cBytes = r.m_cBytes;
@@ -44,16 +45,17 @@ public:
         return *this;
     }
 
-    enum eNALType {
-        NAL_Slice               = 1,
-        NAL_PartitionA          = 2,
-        NAL_PartitionB          = 3,
-        NAL_PartitionC          = 4,
-        NAL_IDR_Slice           = 5,
-        NAL_SEI                                 = 6,
-        NAL_Sequence_Params     = 7,
-        NAL_Picture_Params      = 8,
-        NAL_AUD                                 = 9,
+    enum eNALType
+    {
+        NAL_Slice = 1,
+        NAL_PartitionA = 2,
+        NAL_PartitionB = 3,
+        NAL_PartitionC = 4,
+        NAL_IDR_Slice = 5,
+        NAL_SEI = 6,
+        NAL_Sequence_Params = 7,
+        NAL_Picture_Params = 8,
+        NAL_AUD = 9,
     };
 
     // identify a NAL unit within a buffer.
@@ -62,18 +64,21 @@ public:
     // delimiters.
     bool Parse(const BYTE *pBuffer, int cSpace, int LengthSize, bool bEnd);
 
-    eNALType Type(){
+    eNALType Type()
+    {
         if (m_pStart == NULL) {
             return eNALType(0);
         }
         return eNALType(m_pStart[0] & 0x1F);
     }
 
-    int Length(){
+    int Length()
+    {
         return m_cBytes;
     }
 
-    const BYTE *Start(){
+    const BYTE *Start()
+    {
         return m_pStart;
     }
 
@@ -87,12 +92,13 @@ public:
     BYTE GetBYTE();
     unsigned long GetBit();
 
-    const BYTE *StartCodeStart() {
+    const BYTE *StartCodeStart()
+    {
         return m_pStartCodeStart;
     }
 
 private:
-    bool GetStartCode(const BYTE *& pBegin, const BYTE *& pStart, int& cRemain);
+    bool GetStartCode(const BYTE *&pBegin, const BYTE *&pStart, int &cRemain);
 
 private:
     const BYTE *m_pStartCodeStart;
@@ -106,23 +112,24 @@ private:
     int m_cZeros;
 };
 
-
-
 // simple parser for the Sequence parameter set things that we need
 class LFSeqParamSet
 {
 public:
     LFSeqParamSet();
     bool Parse(LFNALUnit *pnalu);
-    int FrameBits(){
+    int FrameBits()
+    {
         return m_FrameBits;
     }
 
-    long EncodedWidth(){
+    long EncodedWidth()
+    {
         return m_cx;
     }
 
-    long EncodedHeight(){
+    long EncodedHeight()
+    {
         return m_cy;
     }
 
@@ -146,23 +153,28 @@ public:
     }
 
 #endif
-    bool Interlaced(){
+    bool Interlaced()
+    {
         return !m_bFrameOnly;
     }
 
-    unsigned int Profile() {
+    unsigned int Profile()
+    {
         return m_Profile;
     }
 
-    unsigned int Level() {
+    unsigned int Level()
+    {
         return m_Level;
     }
 
-    BYTE Compat() {
+    BYTE Compat()
+    {
         return m_Compatibility;
     }
 
-    LFNALUnit *NALU() {
+    LFNALUnit *NALU()
+    {
         return &m_nalu;
     }
 
@@ -171,7 +183,7 @@ private:
     int m_FrameBits;
     long m_cx;
     long m_cy;
-//    RECT m_rcFrame;
+    //    RECT m_rcFrame;
     bool m_bFrameOnly;
 
     int m_Profile;
@@ -185,11 +197,13 @@ class LFSliceHeader
 public:
     LFSliceHeader(int nBitsFrame)
         : m_framenum(0),
-        m_nBitsFrame(nBitsFrame){
+          m_nBitsFrame(nBitsFrame)
+    {
     }
 
     bool Parse(LFNALUnit *pnalu);
-    int FrameNum(){
+    int FrameNum()
+    {
         return m_framenum;
     }
 
@@ -202,16 +216,19 @@ private:
 class LFSEIMessage
 {
 public:
-    LFSEIMessage(LFNALUnit* pnalu);
-    int Type() {
+    LFSEIMessage(LFNALUnit *pnalu);
+    int Type()
+    {
         return m_type;
     }
 
-    int Length() {
+    int Length()
+    {
         return m_length;
     }
 
-    const BYTE *Payload() {
+    const BYTE *Payload()
+    {
         return m_pnalu->Start() + m_idxPayload;
     }
 
@@ -226,12 +243,14 @@ private:
 class LFavcCHeader
 {
 public:
-    LFavcCHeader(const BYTE* header, int cBytes);
-    LFNALUnit *sps() {
+    LFavcCHeader(const BYTE *header, int cBytes);
+    LFNALUnit *sps()
+    {
         return &m_sps;
     }
 
-    LFNALUnit *pps() {
+    LFNALUnit *pps()
+    {
         return &m_pps;
     }
 
@@ -239,4 +258,3 @@ private:
     LFNALUnit m_sps;
     LFNALUnit m_pps;
 };
-

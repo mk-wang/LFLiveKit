@@ -4,8 +4,7 @@
     Interpolated optimization based on Daniel Rákos' work at http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
  */
 
-@interface GPUImageGaussianBlurFilter : GPUImageTwoPassTextureSamplingFilter 
-{
+@interface GPUImageGaussianBlurFilter : GPUImageTwoPassTextureSamplingFilter {
     BOOL shouldResizeBlurRadiusWithImageSize;
     CGFloat _blurRadiusInPixels;
 }
@@ -24,7 +23,7 @@
 @property (readwrite, nonatomic) CGFloat blurRadiusAsFractionOfImageHeight;
 
 /// The number of times to sequentially blur the incoming image. The more passes, the slower the filter.
-@property(readwrite, nonatomic) NSUInteger blurPasses;
+@property (readwrite, nonatomic) NSUInteger blurPasses;
 
 + (NSString *)vertexShaderForStandardBlurOfRadius:(NSUInteger)blurRadius sigma:(CGFloat)sigma;
 + (NSString *)fragmentShaderForStandardBlurOfRadius:(NSUInteger)blurRadius sigma:(CGFloat)sigma;

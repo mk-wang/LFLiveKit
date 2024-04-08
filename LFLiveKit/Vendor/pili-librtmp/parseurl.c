@@ -31,7 +31,8 @@
 #include "rtmp_sys.h"
 
 int PILI_RTMP_ParseURL2(const char *url, int *protocol, AVal *host, unsigned int *port,
-                        AVal *playpath, AVal *app, AVal *domainName) {
+                        AVal *playpath, AVal *app, AVal *domainName)
+{
     char *p, *end, *col, *ques, *slash;
 
     RTMP_Log(RTMP_LOGDEBUG, "Parsing...");
@@ -138,7 +139,7 @@ parsehost:
         char *domain = strstr(ques, "domain=");
         if (domain) {
             end = domain - 1;
-            domain += 7; //skip "domain="
+            domain += 7; // skip "domain="
             char *domain_end = strchr(domain, '&');
             int host_len = 0;
             if (domain_end) {
@@ -156,10 +157,10 @@ parsehost:
 
     {
         /* parse application
-	 *
-	 * rtmp://host[:port]/app[/appinstance][/...]
-	 * application = app[/appinstance]
-	 */
+         *
+         * rtmp://host[:port]/app[/appinstance][/...]
+         * application = app[/appinstance]
+         */
 
         char *slash2, *slash3 = NULL;
         int applen, appnamelen;
@@ -168,7 +169,7 @@ parsehost:
         if (slash2)
             slash3 = strchr(slash2 + 1, '/');
 
-        applen = end - p; /* ondemand, pass all parameters as app */
+        applen = end - p;    /* ondemand, pass all parameters as app */
         appnamelen = applen; /* ondemand length */
 
         if (ques && strstr(p, "slist=")) { /* whatever it is, the '?' and slist= means we need to use everything as app and parse plapath from slist= */
@@ -216,7 +217,8 @@ parsehost:
  * mp3 streams: prepend "mp3:", remove extension
  * flv streams: remove extension
  */
-void PILI_RTMP_ParsePlaypath(AVal *in, AVal *out) {
+void PILI_RTMP_ParsePlaypath(AVal *in, AVal *out)
+{
     int addMP4 = 0;
     int addMP3 = 0;
     int subExt = 0;
@@ -307,6 +309,7 @@ void PILI_RTMP_ParsePlaypath(AVal *in, AVal *out) {
 }
 
 int PILI_RTMP_ParseURL(const char *url, int *protocol, AVal *host,
-                       unsigned int *port, AVal *playpath, AVal *app) {
+                       unsigned int *port, AVal *playpath, AVal *app)
+{
     return PILI_RTMP_ParseURL2(url, protocol, host, port, playpath, app, NULL);
 }

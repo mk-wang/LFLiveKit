@@ -11,13 +11,12 @@
 
 - (id)init;
 {
-    if (!(self = [super init]))
-    {
-		return nil;
+    if (!(self = [super init])) {
+        return nil;
     }
-    
+
     self.enabled = YES;
-    
+
     return self;
 }
 
@@ -44,7 +43,7 @@
 {
     firstInputFramebuffer = newInputFramebuffer;
     [firstInputFramebuffer lock];
-    
+
     _texture = [firstInputFramebuffer texture];
 }
 
@@ -77,7 +76,6 @@
 
 - (void)setCurrentlyReceivingMonochromeInput:(BOOL)newValue;
 {
-    
 }
 
 @end

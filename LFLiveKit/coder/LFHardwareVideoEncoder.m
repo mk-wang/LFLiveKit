@@ -8,7 +8,7 @@
 #import "LFHardwareVideoEncoder.h"
 #import <VideoToolbox/VideoToolbox.h>
 
-@interface LFHardwareVideoEncoder (){
+@interface LFHardwareVideoEncoder () {
     VTCompressionSessionRef compressionSession;
     NSInteger frameCount;
     NSData *sps;
@@ -26,8 +26,9 @@
 
 @implementation LFHardwareVideoEncoder
 
-#pragma mark -- LifeCycle
-- (instancetype)initWithVideoStreamConfiguration:(LFLiveVideoConfiguration *)configuration {
+#pragma mark-- LifeCycle
+- (instancetype)initWithVideoStreamConfiguration:(LFLiveVideoConfiguration *)configuration
+{
     if (self = [super init]) {
         NSLog(@"USE LFHardwareVideoEncoder");
         _configuration = configuration;
@@ -38,12 +39,12 @@
         enabledWriteVideoFile = NO;
         [self initForFilePath];
 #endif
-        
     }
     return self;
 }
 
-- (void)resetCompressionSession {
+- (void)resetCompressionSession
+{
     if (compressionSession) {
         VTCompressionSessionCompleteFrames(compressionSession, kCMTimeInvalid);
 
@@ -58,33 +59,41 @@
     }
 
     _currentVideoBitRate = _configuration.videoBitRate;
-    VTSessionSetProperty(compressionSession, kVTCompressionPropertyKey_MaxKeyFrameInterval, (__bridge CFTypeRef)@(_configuration.videoMaxKeyframeInterval));
-    VTSessionSetProperty(compressionSession, kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration, (__bridge CFTypeRef)@(_configuration.videoMaxKeyframeInterval/_configuration.videoFrameRate));
-    VTSessionSetProperty(compressionSession, kVTCompressionPropertyKey_ExpectedFrameRate, (__bridge CFTypeRef)@(_configuration.videoFrameRate));
-    VTSessionSetProperty(compressionSession, kVTCompressionPropertyKey_AverageBitRate, (__bridge CFTypeRef)@(_configuration.videoBitRate));
-    NSArray *limit = @[@(_configuration.videoBitRate * 1.5/8), @(1)];
+    VTSessionSetProperty(compressionSession, kVTCompressionPropertyKey_MaxKeyFrameInterval, (__bridge CFTypeRef) @(_configuration.videoMaxKeyframeInterval));
+    VTSessionSetProperty(compressionSession, kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration, (__bridge CFTypeRef) @(_configuration.videoMaxKeyframeInterval / _configuration.videoFrameRate));
+    VTSessionSetProperty(compressionSession, kVTCompressionPropertyKey_ExpectedFrameRate, (__bridge CFTypeRef) @(_configuration.videoFrameRate));
+    VTSessionSetProperty(compressionSession, kVTCompressionPropertyKey_AverageBitRate, (__bridge CFTypeRef) @(_configuration.videoBitRate));
+    NSArray *limit = @[ @(_configuration.videoBitRate * 1.5 / 8), @(1) ];
     VTSessionSetProperty(compressionSession, kVTCompressionPropertyKey_DataRateLimits, (__bridge CFArrayRef)limit);
     VTSessionSetProperty(compressionSession, kVTCompressionPropertyKey_RealTime, kCFBooleanTrue);
     VTSessionSetProperty(compressionSession, kVTCompressionPropertyKey_ProfileLevel, kVTProfileLevel_H264_Main_AutoLevel);
-    VTSessionSetProperty(compressionSession, kVTCompressionPropertyKey_AllowFrameReordering, kCFBooleanTrue);
+
+    if ([[UIDevice currentDevice].systemVersion floatValue] >= 15.4f) {
+        VTSessionSetProperty(compressionSession, kVTCompressionPropertyKey_AllowFrameReordering, kCFBooleanFalse);
+    } else {
+        VTSessionSetProperty(compressionSession, kVTCompressionPropertyKey_AllowFrameReordering, kCFBooleanTrue);
+    }
     VTSessionSetProperty(compressionSession, kVTCompressionPropertyKey_H264EntropyMode, kVTH264EntropyMode_CABAC);
     VTCompressionSessionPrepareToEncodeFrames(compressionSession);
-
 }
 
-- (void)setVideoBitRate:(NSInteger)videoBitRate {
-    if(_isBackGround) return;
-    VTSessionSetProperty(compressionSession, kVTCompressionPropertyKey_AverageBitRate, (__bridge CFTypeRef)@(videoBitRate));
-    NSArray *limit = @[@(videoBitRate * 1.5/8), @(1)];
+- (void)setVideoBitRate:(NSInteger)videoBitRate
+{
+    if (_isBackGround)
+        return;
+    VTSessionSetProperty(compressionSession, kVTCompressionPropertyKey_AverageBitRate, (__bridge CFTypeRef) @(videoBitRate));
+    NSArray *limit = @[ @(videoBitRate * 1.5 / 8), @(1) ];
     VTSessionSetProperty(compressionSession, kVTCompressionPropertyKey_DataRateLimits, (__bridge CFArrayRef)limit);
     _currentVideoBitRate = videoBitRate;
 }
 
-- (NSInteger)videoBitRate {
+- (NSInteger)videoBitRate
+{
     return _currentVideoBitRate;
 }
 
-- (void)dealloc {
+- (void)dealloc
+{
     if (compressionSession != NULL) {
         VTCompressionSessionCompleteFrames(compressionSession, kCMTimeInvalid);
 
@@ -95,9 +104,11 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-#pragma mark -- LFVideoEncoder
-- (void)encodeVideoData:(CVPixelBufferRef)pixelBuffer timeStamp:(uint64_t)timeStamp {
-    if(_isBackGround) return;
+#pragma mark-- LFVideoEncoder
+- (void)encodeVideoData:(CVPixelBufferRef)pixelBuffer timeStamp:(uint64_t)timeStamp
+{
+    if (_isBackGround)
+        return;
     frameCount++;
     CMTime presentationTimeStamp = CMTimeMake(frameCount, (int32_t)_configuration.videoFrameRate);
     VTEncodeInfoFlags flags;
@@ -105,41 +116,49 @@
 
     NSDictionary *properties = nil;
     if (frameCount % (int32_t)_configuration.videoMaxKeyframeInterval == 0) {
-        properties = @{(__bridge NSString *)kVTEncodeFrameOptionKey_ForceKeyFrame: @YES};
+        properties = @{(__bridge NSString *)kVTEncodeFrameOptionKey_ForceKeyFrame : @YES};
     }
     NSNumber *timeNumber = @(timeStamp);
 
     OSStatus status = VTCompressionSessionEncodeFrame(compressionSession, pixelBuffer, presentationTimeStamp, duration, (__bridge CFDictionaryRef)properties, (__bridge_retained void *)timeNumber, &flags);
-    if(status != noErr){
+    if (status != noErr) {
         [self resetCompressionSession];
     }
 }
 
-- (void)stopEncoder {
+- (void)stopEncoder
+{
     VTCompressionSessionCompleteFrames(compressionSession, kCMTimeIndefinite);
 }
 
-- (void)setDelegate:(id<LFVideoEncodingDelegate>)delegate {
+- (void)setDelegate:(id<LFVideoEncodingDelegate>)delegate
+{
     _h264Delegate = delegate;
 }
 
-#pragma mark -- Notification
-- (void)willEnterBackground:(NSNotification*)notification{
+#pragma mark-- Notification
+- (void)willEnterBackground:(NSNotification *)notification
+{
     _isBackGround = YES;
 }
 
-- (void)willEnterForeground:(NSNotification*)notification{
+- (void)willEnterForeground:(NSNotification *)notification
+{
     [self resetCompressionSession];
     _isBackGround = NO;
 }
 
-#pragma mark -- VideoCallBack
-static void VideoCompressonOutputCallback(void *VTref, void *VTFrameRef, OSStatus status, VTEncodeInfoFlags infoFlags, CMSampleBufferRef sampleBuffer){
-    if (!sampleBuffer) return;
+#pragma mark-- VideoCallBack
+static void VideoCompressonOutputCallback(void *VTref, void *VTFrameRef, OSStatus status, VTEncodeInfoFlags infoFlags, CMSampleBufferRef sampleBuffer)
+{
+    if (!sampleBuffer)
+        return;
     CFArrayRef array = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, true);
-    if (!array) return;
+    if (!array)
+        return;
     CFDictionaryRef dic = (CFDictionaryRef)CFArrayGetValueAtIndex(array, 0);
-    if (!dic) return;
+    if (!dic)
+        return;
 
     BOOL keyframe = !CFDictionaryContainsKey(dic, kCMSampleAttachmentKey_NotSync);
     uint64_t timeStamp = [((__bridge_transfer NSNumber *)VTFrameRef) longLongValue];
@@ -172,11 +191,9 @@ static void VideoCompressonOutputCallback(void *VTref, void *VTFrameRef, OSStatu
                     [data appendData:videoEncoder->pps];
                     fwrite(data.bytes, 1, data.length, videoEncoder->fp);
                 }
-
             }
         }
     }
-
 
     CMBlockBufferRef dataBuffer = CMSampleBufferGetDataBuffer(sampleBuffer);
     size_t length, totalLength;
@@ -217,21 +234,20 @@ static void VideoCompressonOutputCallback(void *VTref, void *VTFrameRef, OSStatu
                 fwrite(data.bytes, 1, data.length, videoEncoder->fp);
             }
 
-
             bufferOffset += AVCCHeaderLength + NALUnitLength;
-
         }
-
     }
 }
 
-- (void)initForFilePath {
+- (void)initForFilePath
+{
     NSString *path = [self GetFilePathByfileName:@"IOSCamDemo.h264"];
     NSLog(@"%@", path);
     self->fp = fopen([path cStringUsingEncoding:NSUTF8StringEncoding], "wb");
 }
 
-- (NSString *)GetFilePathByfileName:(NSString*)filename {
+- (NSString *)GetFilePathByfileName:(NSString *)filename
+{
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *writablePath = [documentsDirectory stringByAppendingPathComponent:filename];

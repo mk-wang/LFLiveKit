@@ -10,8 +10,7 @@
 @class GPUImageColourFASTSamplingOperation;
 @class GPUImageBoxBlurFilter;
 
-@interface GPUImageColourFASTFeatureDetector : GPUImageFilterGroup
-{
+@interface GPUImageColourFASTFeatureDetector : GPUImageFilterGroup {
     GPUImageBoxBlurFilter *blurFilter;
     GPUImageColourFASTSamplingOperation *colourFASTSamplingOperation;
 }

@@ -6,20 +6,19 @@
 //  Copyright © 2016年 LaiFeng All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <AVFoundation/AVFoundation.h>
 #import "LFLiveAudioConfiguration.h"
+#import <AVFoundation/AVFoundation.h>
+#import <Foundation/Foundation.h>
 
-#pragma mark -- AudioCaptureNotification
+#pragma mark-- AudioCaptureNotification
 /** compoentFialed will post the notification */
 extern NSString *_Nullable const LFAudioComponentFailedToCreateNotification;
 
 @class LFAudioCapture;
 /** LFAudioCapture callback audioData */
 @protocol LFAudioCaptureDelegate <NSObject>
-- (void)captureOutput:(nullable LFAudioCapture *)capture audioData:(nullable NSData*)audioData;
+- (void)captureOutput:(nullable LFAudioCapture *)capture audioData:(nullable NSData *)audioData;
 @end
-
 
 @interface LFAudioCapture : NSObject
 

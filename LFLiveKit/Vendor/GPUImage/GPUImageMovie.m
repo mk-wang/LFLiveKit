@@ -1,11 +1,9 @@
 #import "GPUImageMovie.h"
-#import "GPUImageMovieWriter.h"
-#import "GPUImageFilter.h"
 #import "GPUImageColorConversion.h"
+#import "GPUImageFilter.h"
+#import "GPUImageMovieWriter.h"
 
-
-@interface GPUImageMovie () <AVPlayerItemOutputPullDelegate>
-{
+@interface GPUImageMovie () <AVPlayerItemOutputPullDelegate> {
     BOOL audioEncodingIsFinished, videoEncodingIsFinished;
     GPUImageMovieWriter *synchronizedMovieWriter;
     AVAssetReader *reader;
@@ -26,7 +24,7 @@
     GLint yuvConversionLuminanceTextureUniform, yuvConversionChrominanceTextureUniform;
     GLint yuvConversionMatrixUniform;
     const GLfloat *_preferredConversion;
-    
+
     BOOL isFullYUVRange;
 
     int imageBufferWidth, imageBufferHeight;
@@ -50,8 +48,7 @@
 
 - (id)initWithURL:(NSURL *)url;
 {
-    if (!(self = [super init])) 
-    {
+    if (!(self = [super init])) {
         return nil;
     }
 
@@ -65,11 +62,10 @@
 
 - (id)initWithAsset:(AVAsset *)asset;
 {
-    if (!(self = [super init])) 
-    {
-      return nil;
+    if (!(self = [super init])) {
+        return nil;
     }
-    
+
     [self yuvConversionSetup];
 
     self.url = nil;
@@ -80,8 +76,7 @@
 
 - (id)initWithPlayerItem:(AVPlayerItem *)playerItem;
 {
-    if (!(self = [super init]))
-    {
+    if (!(self = [super init])) {
         return nil;
     }
 
@@ -96,22 +91,19 @@
 
 - (void)yuvConversionSetup;
 {
-    if ([GPUImageContext supportsFastTextureUpload])
-    {
+    if ([GPUImageContext supportsFastTextureUpload]) {
         runSynchronouslyOnVideoProcessingQueue(^{
             [GPUImageContext useImageProcessingContext];
 
             _preferredConversion = kColorConversion709;
-            isFullYUVRange       = YES;
+            isFullYUVRange = YES;
             yuvConversionProgram = [[GPUImageContext sharedImageProcessingContext] programForVertexShaderString:kGPUImageVertexShaderString fragmentShaderString:kGPUImageYUVFullRangeConversionForLAFragmentShaderString];
 
-            if (!yuvConversionProgram.initialized)
-            {
+            if (!yuvConversionProgram.initialized) {
                 [yuvConversionProgram addAttribute:@"position"];
                 [yuvConversionProgram addAttribute:@"inputTextureCoordinate"];
 
-                if (![yuvConversionProgram link])
-                {
+                if (![yuvConversionProgram link]) {
                     NSString *progLog = [yuvConversionProgram programLog];
                     NSLog(@"Program link log: %@", progLog);
                     NSString *fragLog = [yuvConversionProgram fragmentShaderLog];
@@ -140,9 +132,9 @@
 - (void)dealloc
 {
     [playerItemOutput setDelegate:nil queue:nil];
-    
+
     // Moved into endProcessing
-    //if (self.playerItem && (displayLink != nil))
+    // if (self.playerItem && (displayLink != nil))
     //{
     //    [displayLink invalidate]; // remove from all run loops
     //    displayLink = nil;
@@ -160,42 +152,42 @@
 
 - (void)startProcessing
 {
-    if( self.playerItem ) {
+    if (self.playerItem) {
         [self processPlayerItem];
         return;
     }
-    if(self.url == nil)
-    {
-      [self processAsset];
-      return;
+    if (self.url == nil) {
+        [self processAsset];
+        return;
     }
-    
-    if (_shouldRepeat) keepLooping = YES;
-    
+
+    if (_shouldRepeat)
+        keepLooping = YES;
+
     previousFrameTime = kCMTimeZero;
     previousActualFrameTime = CFAbsoluteTimeGetCurrent();
-  
+
     NSDictionary *inputOptions = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:AVURLAssetPreferPreciseDurationAndTimingKey];
     AVURLAsset *inputAsset = [[AVURLAsset alloc] initWithURL:self.url options:inputOptions];
-    
+
     GPUImageMovie __block *blockSelf = self;
-    
-    [inputAsset loadValuesAsynchronouslyForKeys:[NSArray arrayWithObject:@"tracks"] completionHandler: ^{
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            NSError *error = nil;
-            AVKeyValueStatus tracksStatus = [inputAsset statusOfValueForKey:@"tracks" error:&error];
-            if (tracksStatus != AVKeyValueStatusLoaded)
-            {
-                return;
-            }
-            blockSelf.asset = inputAsset;
-            [blockSelf processAsset];
-            blockSelf = nil;
-        });
-    }];
+
+    [inputAsset loadValuesAsynchronouslyForKeys:[NSArray arrayWithObject:@"tracks"]
+                              completionHandler:^{
+                                  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                                      NSError *error = nil;
+                                      AVKeyValueStatus tracksStatus = [inputAsset statusOfValueForKey:@"tracks" error:&error];
+                                      if (tracksStatus != AVKeyValueStatusLoaded) {
+                                          return;
+                                      }
+                                      blockSelf.asset = inputAsset;
+                                      [blockSelf processAsset];
+                                      blockSelf = nil;
+                                  });
+                              }];
 }
 
-- (AVAssetReader*)createAssetReader
+- (AVAssetReader *)createAssetReader
 {
     NSError *error = nil;
     AVAssetReader *assetReader = [AVAssetReader assetReaderWithAsset:self.asset error:&error];
@@ -204,31 +196,29 @@
     if ([GPUImageContext supportsFastTextureUpload]) {
         [outputSettings setObject:@(kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) forKey:(id)kCVPixelBufferPixelFormatTypeKey];
         isFullYUVRange = YES;
-    }
-    else {
+    } else {
         [outputSettings setObject:@(kCVPixelFormatType_32BGRA) forKey:(id)kCVPixelBufferPixelFormatTypeKey];
         isFullYUVRange = NO;
     }
-    
+
     // Maybe set alwaysCopiesSampleData to NO on iOS 5.0 for faster video decoding
     AVAssetReaderTrackOutput *readerVideoTrackOutput = [AVAssetReaderTrackOutput assetReaderTrackOutputWithTrack:[[self.asset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0] outputSettings:outputSettings];
     readerVideoTrackOutput.alwaysCopiesSampleData = NO;
     [assetReader addOutput:readerVideoTrackOutput];
 
     NSArray *audioTracks = [self.asset tracksWithMediaType:AVMediaTypeAudio];
-    BOOL shouldRecordAudioTrack = (([audioTracks count] > 0) && (self.audioEncodingTarget != nil) );
+    BOOL shouldRecordAudioTrack = (([audioTracks count] > 0) && (self.audioEncodingTarget != nil));
     AVAssetReaderTrackOutput *readerAudioTrackOutput = nil;
 
-    if (shouldRecordAudioTrack)
-    {
+    if (shouldRecordAudioTrack) {
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
         [self.audioEncodingTarget setShouldInvalidateAudioSampleWhenDone:YES];
 #else
 #warning Missing OSX implementation
 #endif
-        
+
         // This might need to be extended to handle movies with more than one audio track
-        AVAssetTrack* audioTrack = [audioTracks objectAtIndex:0];
+        AVAssetTrack *audioTrack = [audioTracks objectAtIndex:0];
         readerAudioTrackOutput = [AVAssetReaderTrackOutput assetReaderTrackOutputWithTrack:audioTrack outputSettings:nil];
         readerAudioTrackOutput.alwaysCopiesSampleData = NO;
         [assetReader addOutput:readerAudioTrackOutput];
@@ -245,26 +235,23 @@
     AVAssetReaderOutput *readerAudioTrackOutput = nil;
 
     audioEncodingIsFinished = YES;
-    for( AVAssetReaderOutput *output in reader.outputs ) {
-        if( [output.mediaType isEqualToString:AVMediaTypeAudio] ) {
+    for (AVAssetReaderOutput *output in reader.outputs) {
+        if ([output.mediaType isEqualToString:AVMediaTypeAudio]) {
             audioEncodingIsFinished = NO;
             readerAudioTrackOutput = output;
-        }
-        else if( [output.mediaType isEqualToString:AVMediaTypeVideo] ) {
+        } else if ([output.mediaType isEqualToString:AVMediaTypeVideo]) {
             readerVideoTrackOutput = output;
         }
     }
 
-    if ([reader startReading] == NO) 
-    {
-            NSLog(@"Error reading from file at URL: %@", self.url);
+    if ([reader startReading] == NO) {
+        NSLog(@"Error reading from file at URL: %@", self.url);
         return;
     }
 
     __unsafe_unretained GPUImageMovie *weakSelf = self;
 
-    if (synchronizedMovieWriter != nil)
-    {
+    if (synchronizedMovieWriter != nil) {
         [synchronizedMovieWriter setVideoInputReadyCallback:^{
             BOOL success = [weakSelf readNextVideoFrameFromOutput:readerVideoTrackOutput];
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
@@ -278,25 +265,20 @@
             return success;
 #endif
         }];
-        
+
         [synchronizedMovieWriter enableSynchronizationCallbacks];
 
-    }
-    else
-    {
-        while (reader.status == AVAssetReaderStatusReading && (!_shouldRepeat || keepLooping))
-        {
-                [weakSelf readNextVideoFrameFromOutput:readerVideoTrackOutput];
+    } else {
+        while (reader.status == AVAssetReaderStatusReading && (!_shouldRepeat || keepLooping)) {
+            [weakSelf readNextVideoFrameFromOutput:readerVideoTrackOutput];
 
-            if ( (readerAudioTrackOutput) && (!audioEncodingIsFinished) )
-            {
-                    [weakSelf readNextAudioSampleFromOutput:readerAudioTrackOutput];
+            if ((readerAudioTrackOutput) && (!audioEncodingIsFinished)) {
+                [weakSelf readNextAudioSampleFromOutput:readerAudioTrackOutput];
             }
-
         }
 
         if (reader.status == AVAssetReaderStatusCompleted) {
-                
+
             [reader cancelReading];
 
             if (keepLooping) {
@@ -307,7 +289,6 @@
             } else {
                 [weakSelf endProcessing];
             }
-
         }
     }
 }
@@ -315,18 +296,17 @@
 - (void)processPlayerItem
 {
     runSynchronouslyOnVideoProcessingQueue(^{
-        
+
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
         displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkCallback:)];
         [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
         [displayLink setPaused:YES];
 #else
         // Suggested implementation: use CVDisplayLink http://stackoverflow.com/questions/14158743/alternative-of-cadisplaylink-for-mac-os-x
-        CGDirectDisplayID   displayID = CGMainDisplayID();
-        CVReturn            error = kCVReturnSuccess;
+        CGDirectDisplayID displayID = CGMainDisplayID();
+        CVReturn error = kCVReturnSuccess;
         error = CVDisplayLinkCreateWithCGDisplay(displayID, &displayLink);
-        if (error)
-        {
+        if (error) {
             NSLog(@"DisplayLink created with error:%d", error);
             displayLink = NULL;
         }
@@ -338,8 +318,7 @@
         NSMutableDictionary *pixBuffAttributes = [NSMutableDictionary dictionary];
         if ([GPUImageContext supportsFastTextureUpload]) {
             [pixBuffAttributes setObject:@(kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) forKey:(id)kCVPixelBufferPixelFormatTypeKey];
-        }
-        else {
+        } else {
             [pixBuffAttributes setObject:@(kCVPixelFormatType_32BGRA) forKey:(id)kCVPixelBufferPixelFormatTypeKey];
         }
         playerItemOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes];
@@ -353,8 +332,8 @@
 - (void)outputMediaDataWillChange:(AVPlayerItemOutput *)sender
 {
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
-	// Restart display link.
-	[displayLink setPaused:NO];
+    // Restart display link.
+    [displayLink setPaused:NO];
 #else
     CVDisplayLinkStart(displayLink);
 #endif
@@ -363,18 +342,17 @@
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
 - (void)displayLinkCallback:(CADisplayLink *)sender
 {
-	/*
-	 The callback gets called once every Vsync.
-	 Using the display link's timestamp and duration we can compute the next time the screen will be refreshed, and copy the pixel buffer for that time
-	 This pixel buffer can then be processed and later rendered on screen.
-	 */
-	// Calculate the nextVsync time which is when the screen will be refreshed next.
-	CFTimeInterval nextVSync = ([sender timestamp] + [sender duration]);
+    /*
+     The callback gets called once every Vsync.
+     Using the display link's timestamp and duration we can compute the next time the screen will be refreshed, and copy the pixel buffer for that time
+     This pixel buffer can then be processed and later rendered on screen.
+     */
+    // Calculate the nextVsync time which is when the screen will be refreshed next.
+    CFTimeInterval nextVSync = ([sender timestamp] + [sender duration]);
 
-	CMTime outputItemTime = [playerItemOutput itemTimeForHostTime:nextVSync];
+    CMTime outputItemTime = [playerItemOutput itemTimeForHostTime:nextVSync];
 
     [self processPixelBufferAtTime:outputItemTime];
-
 }
 #else
 static CVReturn renderCallback(CVDisplayLinkRef displayLink,
@@ -385,26 +363,26 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
                                void *displayLinkContext)
 {
     // Sample code taken from here https://developer.apple.com/library/mac/samplecode/AVGreenScreenPlayer/Listings/AVGreenScreenPlayer_GSPlayerView_m.html
-    
+
     GPUImageMovie *self = (__bridge GPUImageMovie *)displayLinkContext;
     AVPlayerItemVideoOutput *playerItemOutput = self->playerItemOutput;
-    
-    
+
     // The displayLink calls back at every vsync (screen refresh)
     // Compute itemTime for the next vsync
     CMTime outputItemTime = [playerItemOutput itemTimeForCVTimeStamp:*inOutputTime];
-    
+
     [self processPixelBufferAtTime:outputItemTime];
-    
+
     return kCVReturnSuccess;
 }
 #endif
 
-- (void)processPixelBufferAtTime:(CMTime)outputItemTime {
+- (void)processPixelBufferAtTime:(CMTime)outputItemTime
+{
     if ([playerItemOutput hasNewPixelBufferForItemTime:outputItemTime]) {
         __unsafe_unretained GPUImageMovie *weakSelf = self;
         CVPixelBufferRef pixelBuffer = [playerItemOutput copyPixelBufferForItemTime:outputItemTime itemTimeForDisplay:NULL];
-        if( pixelBuffer )
+        if (pixelBuffer)
             runSynchronouslyOnVideoProcessingQueue(^{
                 [weakSelf processMovieFrame:pixelBuffer withSampleTime:outputItemTime];
                 CFRelease(pixelBuffer);
@@ -414,27 +392,23 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
 
 - (BOOL)readNextVideoFrameFromOutput:(AVAssetReaderOutput *)readerVideoTrackOutput;
 {
-    if (reader.status == AVAssetReaderStatusReading && ! videoEncodingIsFinished)
-    {
+    if (reader.status == AVAssetReaderStatusReading && !videoEncodingIsFinished) {
         CMSampleBufferRef sampleBufferRef = [readerVideoTrackOutput copyNextSampleBuffer];
-        if (sampleBufferRef) 
-        {
-            //NSLog(@"read a video frame: %@", CFBridgingRelease(CMTimeCopyDescription(kCFAllocatorDefault, CMSampleBufferGetOutputPresentationTimeStamp(sampleBufferRef))));
-            if (_playAtActualSpeed)
-            {
+        if (sampleBufferRef) {
+            // NSLog(@"read a video frame: %@", CFBridgingRelease(CMTimeCopyDescription(kCFAllocatorDefault, CMSampleBufferGetOutputPresentationTimeStamp(sampleBufferRef))));
+            if (_playAtActualSpeed) {
                 // Do this outside of the video processing queue to not slow that down while waiting
                 CMTime currentSampleTime = CMSampleBufferGetOutputPresentationTimeStamp(sampleBufferRef);
                 CMTime differenceFromLastFrame = CMTimeSubtract(currentSampleTime, previousFrameTime);
                 CFAbsoluteTime currentActualTime = CFAbsoluteTimeGetCurrent();
-                
+
                 CGFloat frameTimeDifference = CMTimeGetSeconds(differenceFromLastFrame);
                 CGFloat actualTimeDifference = currentActualTime - previousActualFrameTime;
-                
-                if (frameTimeDifference > actualTimeDifference)
-                {
+
+                if (frameTimeDifference > actualTimeDifference) {
                     usleep(1000000.0 * (frameTimeDifference - actualTimeDifference));
                 }
-                
+
                 previousFrameTime = currentSampleTime;
                 previousActualFrameTime = CFAbsoluteTimeGetCurrent();
             }
@@ -447,20 +421,15 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
             });
 
             return YES;
-        }
-        else
-        {
+        } else {
             if (!keepLooping) {
                 videoEncodingIsFinished = YES;
-                if( videoEncodingIsFinished && audioEncodingIsFinished )
+                if (videoEncodingIsFinished && audioEncodingIsFinished)
                     [self endProcessing];
             }
         }
-    }
-    else if (synchronizedMovieWriter != nil)
-    {
-        if (reader.status == AVAssetReaderStatusCompleted)
-        {
+    } else if (synchronizedMovieWriter != nil) {
+        if (reader.status == AVAssetReaderStatusCompleted) {
             [self endProcessing];
         }
     }
@@ -469,41 +438,34 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
 
 - (BOOL)readNextAudioSampleFromOutput:(AVAssetReaderOutput *)readerAudioTrackOutput;
 {
-    if (reader.status == AVAssetReaderStatusReading && ! audioEncodingIsFinished)
-    {
+    if (reader.status == AVAssetReaderStatusReading && !audioEncodingIsFinished) {
         CMSampleBufferRef audioSampleBufferRef = [readerAudioTrackOutput copyNextSampleBuffer];
-        if (audioSampleBufferRef)
-        {
-            //NSLog(@"read an audio frame: %@", CFBridgingRelease(CMTimeCopyDescription(kCFAllocatorDefault, CMSampleBufferGetOutputPresentationTimeStamp(audioSampleBufferRef))));
+        if (audioSampleBufferRef) {
+            // NSLog(@"read an audio frame: %@", CFBridgingRelease(CMTimeCopyDescription(kCFAllocatorDefault, CMSampleBufferGetOutputPresentationTimeStamp(audioSampleBufferRef))));
             [self.audioEncodingTarget processAudioBuffer:audioSampleBufferRef];
             CFRelease(audioSampleBufferRef);
             return YES;
-        }
-        else
-        {
+        } else {
             if (!keepLooping) {
                 audioEncodingIsFinished = YES;
-                if( videoEncodingIsFinished && audioEncodingIsFinished )
+                if (videoEncodingIsFinished && audioEncodingIsFinished)
                     [self endProcessing];
             }
         }
-    }
-    else if (synchronizedMovieWriter != nil)
-    {
+    } else if (synchronizedMovieWriter != nil) {
         if (reader.status == AVAssetReaderStatusCompleted || reader.status == AVAssetReaderStatusFailed ||
-            reader.status == AVAssetReaderStatusCancelled)
-        {
+            reader.status == AVAssetReaderStatusCancelled) {
             [self endProcessing];
         }
     }
     return NO;
 }
 
-- (void)processMovieFrame:(CMSampleBufferRef)movieSampleBuffer; 
+- (void)processMovieFrame:(CMSampleBufferRef)movieSampleBuffer;
 {
-//    CMTimeGetSeconds
-//    CMTimeSubtract
-    
+    //    CMTimeGetSeconds
+    //    CMTimeSubtract
+
     CMTime currentSampleTime = CMSampleBufferGetOutputPresentationTimeStamp(movieSampleBuffer);
     CVImageBufferRef movieFrame = CMSampleBufferGetImageBuffer(movieSampleBuffer);
 
@@ -513,67 +475,48 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
 
 - (float)progress
 {
-    if ( AVAssetReaderStatusReading == reader.status )
-    {
+    if (AVAssetReaderStatusReading == reader.status) {
         float current = processingFrameTime.value * 1.0f / processingFrameTime.timescale;
         float duration = self.asset.duration.value * 1.0f / self.asset.duration.timescale;
         return current / duration;
-    }
-    else if ( AVAssetReaderStatusCompleted == reader.status )
-    {
+    } else if (AVAssetReaderStatusCompleted == reader.status) {
         return 1.f;
-    }
-    else
-    {
+    } else {
         return 0.f;
     }
 }
 
 - (void)processMovieFrame:(CVPixelBufferRef)movieFrame withSampleTime:(CMTime)currentSampleTime
 {
-    int bufferHeight = (int) CVPixelBufferGetHeight(movieFrame);
-    int bufferWidth = (int) CVPixelBufferGetWidth(movieFrame);
+    int bufferHeight = (int)CVPixelBufferGetHeight(movieFrame);
+    int bufferWidth = (int)CVPixelBufferGetWidth(movieFrame);
 
     CFTypeRef colorAttachments = CVBufferGetAttachment(movieFrame, kCVImageBufferYCbCrMatrixKey, NULL);
-    if (colorAttachments != NULL)
-    {
-        if(CFStringCompare(colorAttachments, kCVImageBufferYCbCrMatrix_ITU_R_601_4, 0) == kCFCompareEqualTo)
-        {
-            if (isFullYUVRange)
-            {
+    if (colorAttachments != NULL) {
+        if (CFStringCompare(colorAttachments, kCVImageBufferYCbCrMatrix_ITU_R_601_4, 0) == kCFCompareEqualTo) {
+            if (isFullYUVRange) {
                 _preferredConversion = kColorConversion601FullRange;
-            }
-            else
-            {
+            } else {
                 _preferredConversion = kColorConversion601;
             }
-        }
-        else
-        {
+        } else {
             _preferredConversion = kColorConversion709;
         }
-    }
-    else
-    {
-        if (isFullYUVRange)
-        {
+    } else {
+        if (isFullYUVRange) {
             _preferredConversion = kColorConversion601FullRange;
-        }
-        else
-        {
+        } else {
             _preferredConversion = kColorConversion601;
         }
-
     }
-    
+
     CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
 
     // Fix issue 1580
     [GPUImageContext useImageProcessingContext];
-    
-    if ([GPUImageContext supportsFastTextureUpload])
-    {
-        
+
+    if ([GPUImageContext supportsFastTextureUpload]) {
+
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
         CVOpenGLESTextureRef luminanceTextureRef = NULL;
         CVOpenGLESTextureRef chrominanceTextureRef = NULL;
@@ -585,13 +528,11 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
         //        if (captureAsYUV && [GPUImageContext deviceSupportsRedTextures])
         if (CVPixelBufferGetPlaneCount(movieFrame) > 0) // Check for YUV planar inputs to do RGB conversion
         {
-            
-            // fix issue 2221
-            CVPixelBufferLockBaseAddress(movieFrame,0);
-        
 
-            if ( (imageBufferWidth != bufferWidth) && (imageBufferHeight != bufferHeight) )
-            {
+            // fix issue 2221
+            CVPixelBufferLockBaseAddress(movieFrame, 0);
+
+            if ((imageBufferWidth != bufferWidth) && (imageBufferHeight != bufferHeight)) {
                 imageBufferWidth = bufferWidth;
                 imageBufferHeight = bufferHeight;
             }
@@ -599,24 +540,20 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
             CVReturn err;
             // Y-plane
             glActiveTexture(GL_TEXTURE4);
-            if ([GPUImageContext deviceSupportsRedTextures])
-            {
+            if ([GPUImageContext deviceSupportsRedTextures]) {
+#if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
+                err = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, [[GPUImageContext sharedImageProcessingContext] coreVideoTextureCache], movieFrame, NULL, GL_TEXTURE_2D, GL_LUMINANCE, bufferWidth, bufferHeight, GL_LUMINANCE, GL_UNSIGNED_BYTE, 0, &luminanceTextureRef);
+#else
+                err = CVOpenGLTextureCacheCreateTextureFromImage(kCFAllocatorDefault, [[GPUImageContext sharedImageProcessingContext] coreVideoTextureCache], movieFrame, NULL, &luminanceTextureRef);
+#endif
+            } else {
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
                 err = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, [[GPUImageContext sharedImageProcessingContext] coreVideoTextureCache], movieFrame, NULL, GL_TEXTURE_2D, GL_LUMINANCE, bufferWidth, bufferHeight, GL_LUMINANCE, GL_UNSIGNED_BYTE, 0, &luminanceTextureRef);
 #else
                 err = CVOpenGLTextureCacheCreateTextureFromImage(kCFAllocatorDefault, [[GPUImageContext sharedImageProcessingContext] coreVideoTextureCache], movieFrame, NULL, &luminanceTextureRef);
 #endif
             }
-            else
-            {
-#if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
-                err = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, [[GPUImageContext sharedImageProcessingContext] coreVideoTextureCache], movieFrame, NULL, GL_TEXTURE_2D, GL_LUMINANCE, bufferWidth, bufferHeight, GL_LUMINANCE, GL_UNSIGNED_BYTE, 0, &luminanceTextureRef);
-#else
-                err = CVOpenGLTextureCacheCreateTextureFromImage(kCFAllocatorDefault, [[GPUImageContext sharedImageProcessingContext] coreVideoTextureCache], movieFrame, NULL, &luminanceTextureRef);
-#endif
-            }
-            if (err)
-            {
+            if (err) {
                 NSLog(@"Error at CVOpenGLESTextureCacheCreateTextureFromImage %d", err);
             }
 
@@ -631,24 +568,20 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
 
             // UV-plane
             glActiveTexture(GL_TEXTURE5);
-            if ([GPUImageContext deviceSupportsRedTextures])
-            {
+            if ([GPUImageContext deviceSupportsRedTextures]) {
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
-                err = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, [[GPUImageContext sharedImageProcessingContext] coreVideoTextureCache], movieFrame, NULL, GL_TEXTURE_2D, GL_LUMINANCE_ALPHA, bufferWidth/2, bufferHeight/2, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 1, &chrominanceTextureRef);
+                err = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, [[GPUImageContext sharedImageProcessingContext] coreVideoTextureCache], movieFrame, NULL, GL_TEXTURE_2D, GL_LUMINANCE_ALPHA, bufferWidth / 2, bufferHeight / 2, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 1, &chrominanceTextureRef);
+#else
+                err = CVOpenGLTextureCacheCreateTextureFromImage(kCFAllocatorDefault, [[GPUImageContext sharedImageProcessingContext] coreVideoTextureCache], movieFrame, NULL, &chrominanceTextureRef);
+#endif
+            } else {
+#if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
+                err = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, [[GPUImageContext sharedImageProcessingContext] coreVideoTextureCache], movieFrame, NULL, GL_TEXTURE_2D, GL_LUMINANCE_ALPHA, bufferWidth / 2, bufferHeight / 2, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 1, &chrominanceTextureRef);
 #else
                 err = CVOpenGLTextureCacheCreateTextureFromImage(kCFAllocatorDefault, [[GPUImageContext sharedImageProcessingContext] coreVideoTextureCache], movieFrame, NULL, &chrominanceTextureRef);
 #endif
             }
-            else
-            {
-#if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
-                err = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, [[GPUImageContext sharedImageProcessingContext] coreVideoTextureCache], movieFrame, NULL, GL_TEXTURE_2D, GL_LUMINANCE_ALPHA, bufferWidth/2, bufferHeight/2, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 1, &chrominanceTextureRef);
-#else
-                err = CVOpenGLTextureCacheCreateTextureFromImage(kCFAllocatorDefault, [[GPUImageContext sharedImageProcessingContext] coreVideoTextureCache], movieFrame, NULL, &chrominanceTextureRef);
-#endif
-            }
-            if (err)
-            {
+            if (err) {
                 NSLog(@"Error at CVOpenGLESTextureCacheCreateTextureFromImage %d", err);
             }
 
@@ -661,23 +594,21 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-//            if (!allTargetsWantMonochromeData)
-//            {
-                [self convertYUVToRGBOutput];
-//            }
+            //            if (!allTargetsWantMonochromeData)
+            //            {
+            [self convertYUVToRGBOutput];
+            //            }
 
-            for (id<GPUImageInput> currentTarget in targets)
-            {
+            for (id<GPUImageInput> currentTarget in targets) {
                 NSInteger indexOfObject = [targets indexOfObject:currentTarget];
                 NSInteger targetTextureIndex = [[targetTextureIndices objectAtIndex:indexOfObject] integerValue];
                 [currentTarget setInputSize:CGSizeMake(bufferWidth, bufferHeight) atIndex:targetTextureIndex];
                 [currentTarget setInputFramebuffer:outputFramebuffer atIndex:targetTextureIndex];
             }
-            
+
             [outputFramebuffer unlock];
 
-            for (id<GPUImageInput> currentTarget in targets)
-            {
+            for (id<GPUImageInput> currentTarget in targets) {
                 NSInteger indexOfObject = [targets indexOfObject:currentTarget];
                 NSInteger targetTextureIndex = [[targetTextureIndices objectAtIndex:indexOfObject] integerValue];
                 [currentTarget newFrameReadyAtTime:currentSampleTime atIndex:targetTextureIndex];
@@ -686,51 +617,47 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
             CVPixelBufferUnlockBaseAddress(movieFrame, 0);
             CFRelease(luminanceTextureRef);
             CFRelease(chrominanceTextureRef);
-        }
-        else
-        {
+        } else {
             // TODO: Mesh this with the new framebuffer cache
-//            CVPixelBufferLockBaseAddress(movieFrame, 0);
-//
-//            CVReturn err = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, coreVideoTextureCache, movieFrame, NULL, GL_TEXTURE_2D, GL_RGBA, bufferWidth, bufferHeight, GL_BGRA, GL_UNSIGNED_BYTE, 0, &texture);
-//
-//            if (!texture || err) {
-//                NSLog(@"Movie CVOpenGLESTextureCacheCreateTextureFromImage failed (error: %d)", err);
-//                NSAssert(NO, @"Camera failure");
-//                return;
-//            }
-//
-//            outputTexture = CVOpenGLESTextureGetName(texture);
-//            //        glBindTexture(CVOpenGLESTextureGetTarget(texture), outputTexture);
-//            glBindTexture(GL_TEXTURE_2D, outputTexture);
-//            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-//
-//            for (id<GPUImageInput> currentTarget in targets)
-//            {
-//                NSInteger indexOfObject = [targets indexOfObject:currentTarget];
-//                NSInteger targetTextureIndex = [[targetTextureIndices objectAtIndex:indexOfObject] integerValue];
-//
-//                [currentTarget setInputSize:CGSizeMake(bufferWidth, bufferHeight) atIndex:targetTextureIndex];
-//                [currentTarget setInputTexture:outputTexture atIndex:targetTextureIndex];
-//
-//                [currentTarget newFrameReadyAtTime:currentSampleTime atIndex:targetTextureIndex];
-//            }
-//
-//            CVPixelBufferUnlockBaseAddress(movieFrame, 0);
-//            CVOpenGLESTextureCacheFlush(coreVideoTextureCache, 0);
-//            CFRelease(texture);
-//            
-//            outputTexture = 0;
+            //            CVPixelBufferLockBaseAddress(movieFrame, 0);
+            //
+            //            CVReturn err = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, coreVideoTextureCache, movieFrame, NULL, GL_TEXTURE_2D, GL_RGBA, bufferWidth, bufferHeight, GL_BGRA, GL_UNSIGNED_BYTE, 0, &texture);
+            //
+            //            if (!texture || err) {
+            //                NSLog(@"Movie CVOpenGLESTextureCacheCreateTextureFromImage failed (error: %d)", err);
+            //                NSAssert(NO, @"Camera failure");
+            //                return;
+            //            }
+            //
+            //            outputTexture = CVOpenGLESTextureGetName(texture);
+            //            //        glBindTexture(CVOpenGLESTextureGetTarget(texture), outputTexture);
+            //            glBindTexture(GL_TEXTURE_2D, outputTexture);
+            //            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            //            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            //            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            //            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            //
+            //            for (id<GPUImageInput> currentTarget in targets)
+            //            {
+            //                NSInteger indexOfObject = [targets indexOfObject:currentTarget];
+            //                NSInteger targetTextureIndex = [[targetTextureIndices objectAtIndex:indexOfObject] integerValue];
+            //
+            //                [currentTarget setInputSize:CGSizeMake(bufferWidth, bufferHeight) atIndex:targetTextureIndex];
+            //                [currentTarget setInputTexture:outputTexture atIndex:targetTextureIndex];
+            //
+            //                [currentTarget newFrameReadyAtTime:currentSampleTime atIndex:targetTextureIndex];
+            //            }
+            //
+            //            CVPixelBufferUnlockBaseAddress(movieFrame, 0);
+            //            CVOpenGLESTextureCacheFlush(coreVideoTextureCache, 0);
+            //            CFRelease(texture);
+            //
+            //            outputTexture = 0;
         }
-    }
-    else
-    {
+    } else {
         // Upload to texture
         CVPixelBufferLockBaseAddress(movieFrame, 0);
-        
+
         outputFramebuffer = [[GPUImageContext sharedFramebufferCache] fetchFramebufferForSize:CGSizeMake(bufferWidth, bufferHeight) textureOptions:self.outputTextureOptions onlyTexture:YES];
 
         glBindTexture(GL_TEXTURE_2D, [outputFramebuffer texture]);
@@ -744,28 +671,25 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
                      self.outputTextureOptions.format,
                      self.outputTextureOptions.type,
                      CVPixelBufferGetBaseAddress(movieFrame));
-        
-        for (id<GPUImageInput> currentTarget in targets)
-        {
+
+        for (id<GPUImageInput> currentTarget in targets) {
             NSInteger indexOfObject = [targets indexOfObject:currentTarget];
             NSInteger targetTextureIndex = [[targetTextureIndices objectAtIndex:indexOfObject] integerValue];
             [currentTarget setInputSize:CGSizeMake(bufferWidth, bufferHeight) atIndex:targetTextureIndex];
             [currentTarget setInputFramebuffer:outputFramebuffer atIndex:targetTextureIndex];
         }
-        
+
         [outputFramebuffer unlock];
-        
-        for (id<GPUImageInput> currentTarget in targets)
-        {
+
+        for (id<GPUImageInput> currentTarget in targets) {
             NSInteger indexOfObject = [targets indexOfObject:currentTarget];
             NSInteger targetTextureIndex = [[targetTextureIndices objectAtIndex:indexOfObject] integerValue];
             [currentTarget newFrameReadyAtTime:currentSampleTime atIndex:targetTextureIndex];
         }
         CVPixelBufferUnlockBaseAddress(movieFrame, 0);
     }
-    
-    if (_runBenchmark)
-    {
+
+    if (_runBenchmark) {
         CFAbsoluteTime currentFrameTime = (CFAbsoluteTimeGetCurrent() - startTime);
         NSLog(@"Current frame time : %f ms", 1000.0 * currentFrameTime);
     }
@@ -780,25 +704,28 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
     CVDisplayLinkStop(displayLink);
 #endif
 
-    for (id<GPUImageInput> currentTarget in targets)
-    {
+    for (id<GPUImageInput> currentTarget in targets) {
         [currentTarget endProcessing];
     }
-    
-    if (synchronizedMovieWriter != nil)
-    {
+
+    if (synchronizedMovieWriter != nil) {
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
-        [synchronizedMovieWriter setVideoInputReadyCallback:^{return NO;}];
-        [synchronizedMovieWriter setAudioInputReadyCallback:^{return NO;}];
+        [synchronizedMovieWriter setVideoInputReadyCallback:^{
+            return NO;
+        }];
+        [synchronizedMovieWriter setAudioInputReadyCallback:^{
+            return NO;
+        }];
 #else
         // I'm not sure about this, meybe setting a nil will be more appropriate then an empty block
-        [synchronizedMovieWriter setVideoInputReadyCallback:^{}];
-        [synchronizedMovieWriter setAudioInputReadyCallback:^{}];
+        [synchronizedMovieWriter setVideoInputReadyCallback:^{
+        }];
+        [synchronizedMovieWriter setAudioInputReadyCallback:^{
+        }];
 #endif
     }
-    
-    if (self.playerItem && (displayLink != nil))
-    {
+
+    if (self.playerItem && (displayLink != nil)) {
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
         [displayLink invalidate]; // remove from all run loops
         displayLink = nil;
@@ -832,44 +759,55 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     static const GLfloat squareVertices[] = {
-        -1.0f, -1.0f,
-        1.0f, -1.0f,
-        -1.0f,  1.0f,
-        1.0f,  1.0f,
+        -1.0f,
+        -1.0f,
+        1.0f,
+        -1.0f,
+        -1.0f,
+        1.0f,
+        1.0f,
+        1.0f,
     };
 
     static const GLfloat textureCoordinates[] = {
-        0.0f, 0.0f,
-        1.0f, 0.0f,
-        0.0f, 1.0f,
-        1.0f, 1.0f,
+        0.0f,
+        0.0f,
+        1.0f,
+        0.0f,
+        0.0f,
+        1.0f,
+        1.0f,
+        1.0f,
     };
 
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, luminanceTexture);
-	glUniform1i(yuvConversionLuminanceTextureUniform, 4);
+    glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_2D, luminanceTexture);
+    glUniform1i(yuvConversionLuminanceTextureUniform, 4);
 
     glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, chrominanceTexture);
-	glUniform1i(yuvConversionChrominanceTextureUniform, 5);
+    glBindTexture(GL_TEXTURE_2D, chrominanceTexture);
+    glUniform1i(yuvConversionChrominanceTextureUniform, 5);
 
     glUniformMatrix3fv(yuvConversionMatrixUniform, 1, GL_FALSE, _preferredConversion);
 
     glVertexAttribPointer(yuvConversionPositionAttribute, 2, GL_FLOAT, 0, 0, squareVertices);
-	glVertexAttribPointer(yuvConversionTextureCoordinateAttribute, 2, GL_FLOAT, 0, 0, textureCoordinates);
+    glVertexAttribPointer(yuvConversionTextureCoordinateAttribute, 2, GL_FLOAT, 0, 0, textureCoordinates);
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
-- (AVAssetReader*)assetReader {
+- (AVAssetReader *)assetReader
+{
     return reader;
 }
 
-- (BOOL)audioEncodingIsFinished {
+- (BOOL)audioEncodingIsFinished
+{
     return audioEncodingIsFinished;
 }
 
-- (BOOL)videoEncodingIsFinished {
+- (BOOL)videoEncodingIsFinished
+{
     return videoEncodingIsFinished;
 }
 

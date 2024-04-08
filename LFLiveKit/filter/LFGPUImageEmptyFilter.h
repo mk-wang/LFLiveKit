@@ -4,8 +4,7 @@
 #import "GPUImage.h"
 #endif
 
-@interface LFGPUImageEmptyFilter : GPUImageFilter
-{
+@interface LFGPUImageEmptyFilter : GPUImageFilter {
 }
 
 @end

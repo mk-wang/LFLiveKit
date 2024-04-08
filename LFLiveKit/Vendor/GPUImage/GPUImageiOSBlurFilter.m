@@ -1,7 +1,7 @@
 #import "GPUImageiOSBlurFilter.h"
-#import "GPUImageSaturationFilter.h"
 #import "GPUImageGaussianBlurFilter.h"
 #import "GPUImageLuminanceRangeFilter.h"
+#import "GPUImageSaturationFilter.h"
 
 @implementation GPUImageiOSBlurFilter
 
@@ -14,29 +14,28 @@
 
 - (id)init;
 {
-    if (!(self = [super init]))
-    {
-		return nil;
+    if (!(self = [super init])) {
+        return nil;
     }
-    
+
     // First pass: downsample and desaturate
     saturationFilter = [[GPUImageSaturationFilter alloc] init];
     [self addFilter:saturationFilter];
-    
+
     // Second pass: apply a strong Gaussian blur
     blurFilter = [[GPUImageGaussianBlurFilter alloc] init];
     [self addFilter:blurFilter];
-    
+
     // Third pass: upsample and adjust luminance range
     luminanceRangeFilter = [[GPUImageLuminanceRangeFilter alloc] init];
     [self addFilter:luminanceRangeFilter];
-        
+
     [saturationFilter addTarget:blurFilter];
     [blurFilter addTarget:luminanceRangeFilter];
-    
+
     self.initialFilters = [NSArray arrayWithObject:saturationFilter];
     self.terminalFilter = luminanceRangeFilter;
-    
+
     self.blurRadiusInPixels = 12.0;
     self.saturation = 0.8;
     self.downsampling = 4.0;
@@ -47,14 +46,13 @@
 
 - (void)setInputSize:(CGSize)newSize atIndex:(NSInteger)textureIndex;
 {
-    if (_downsampling > 1.0)
-    {
+    if (_downsampling > 1.0) {
         CGSize rotatedSize = [saturationFilter rotatedSize:newSize forIndex:textureIndex];
 
         [saturationFilter forceProcessingAtSize:CGSizeMake(rotatedSize.width / _downsampling, rotatedSize.height / _downsampling)];
         [luminanceRangeFilter forceProcessingAtSize:rotatedSize];
     }
-    
+
     [super setInputSize:newSize atIndex:textureIndex];
 }
 
@@ -74,7 +72,6 @@
 // let d = floor(s * 3*sqrt(2*pi)/4 + 0.5)
 //
 // ... if d is odd, use three box-blurs of size 'd', centered on the output pixel.
-
 
 - (void)setBlurRadiusInPixels:(CGFloat)newValue;
 {

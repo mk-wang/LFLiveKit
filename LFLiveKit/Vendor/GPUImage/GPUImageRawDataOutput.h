@@ -1,7 +1,8 @@
-#import <Foundation/Foundation.h>
 #import "GPUImageContext.h"
+#import <Foundation/Foundation.h>
 
-struct GPUByteColorVector {
+struct GPUByteColorVector
+{
     GLubyte red;
     GLubyte green;
     GLubyte blue;
@@ -25,9 +26,9 @@ typedef struct GPUByteColorVector GPUByteColorVector;
 }
 #endif
 
-@property(readonly) GLubyte *rawBytesForImage;
-@property(nonatomic, copy) void(^newFrameAvailableBlock)(void);
-@property(nonatomic) BOOL enabled;
+@property (readonly) GLubyte *rawBytesForImage;
+@property (nonatomic, copy) void (^newFrameAvailableBlock)(void);
+@property (nonatomic) BOOL enabled;
 
 // Initialization and teardown
 - (id)initWithImageSize:(CGSize)newImageSize resultsInBGRAFormat:(BOOL)resultsInBGRAFormat;

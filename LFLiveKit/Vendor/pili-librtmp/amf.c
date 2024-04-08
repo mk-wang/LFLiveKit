@@ -37,7 +37,8 @@ static const AVal AV_empty = {0, 0};
 
 /* Data is Big-Endian */
 unsigned short
-    AMF_DecodeInt16(const char *data) {
+AMF_DecodeInt16(const char *data)
+{
     unsigned char *c = (unsigned char *)data;
     unsigned short val;
     val = (c[0] << 8) | c[1];
@@ -45,7 +46,8 @@ unsigned short
 }
 
 unsigned int
-    AMF_DecodeInt24(const char *data) {
+AMF_DecodeInt24(const char *data)
+{
     unsigned char *c = (unsigned char *)data;
     unsigned int val;
     val = (c[0] << 16) | (c[1] << 8) | c[2];
@@ -53,25 +55,29 @@ unsigned int
 }
 
 unsigned int
-    AMF_DecodeInt32(const char *data) {
+AMF_DecodeInt32(const char *data)
+{
     unsigned char *c = (unsigned char *)data;
     unsigned int val;
     val = (c[0] << 24) | (c[1] << 16) | (c[2] << 8) | c[3];
     return val;
 }
 
-void AMF_DecodeString(const char *data, AVal *bv) {
+void AMF_DecodeString(const char *data, AVal *bv)
+{
     bv->av_len = AMF_DecodeInt16(data);
     bv->av_val = (bv->av_len > 0) ? (char *)data + 2 : NULL;
 }
 
-void AMF_DecodeLongString(const char *data, AVal *bv) {
+void AMF_DecodeLongString(const char *data, AVal *bv)
+{
     bv->av_len = AMF_DecodeInt32(data);
     bv->av_val = (bv->av_len > 0) ? (char *)data + 4 : NULL;
 }
 
 double
-    AMF_DecodeNumber(const char *data) {
+AMF_DecodeNumber(const char *data)
+{
     double dVal;
 #if __FLOAT_WORD_ORDER == __BYTE_ORDER
 #if __BYTE_ORDER == __BIG_ENDIAN
@@ -102,7 +108,7 @@ double
     co[5] = ci[6];
     co[6] = ci[5];
     co[7] = ci[4];
-#else /* __BYTE_ORDER == __BIG_ENDIAN && __FLOAT_WORD_ORER == __LITTLE_ENDIAN */
+#else                               /* __BYTE_ORDER == __BIG_ENDIAN && __FLOAT_WORD_ORER == __LITTLE_ENDIAN */
     unsigned char *ci, *co;
     ci = (unsigned char *)data;
     co = (unsigned char *)&dVal;
@@ -119,12 +125,14 @@ double
     return dVal;
 }
 
-int AMF_DecodeBoolean(const char *data) {
+int AMF_DecodeBoolean(const char *data)
+{
     return *data != 0;
 }
 
 char *
-    AMF_EncodeInt16(char *output, char *outend, short nVal) {
+AMF_EncodeInt16(char *output, char *outend, short nVal)
+{
     if (output + 2 > outend)
         return NULL;
 
@@ -134,7 +142,8 @@ char *
 }
 
 char *
-    AMF_EncodeInt24(char *output, char *outend, int nVal) {
+AMF_EncodeInt24(char *output, char *outend, int nVal)
+{
     if (output + 3 > outend)
         return NULL;
 
@@ -145,7 +154,8 @@ char *
 }
 
 char *
-    AMF_EncodeInt32(char *output, char *outend, int nVal) {
+AMF_EncodeInt32(char *output, char *outend, int nVal)
+{
     if (output + 4 > outend)
         return NULL;
 
@@ -157,7 +167,8 @@ char *
 }
 
 char *
-    AMF_EncodeString(char *output, char *outend, const AVal *bv) {
+AMF_EncodeString(char *output, char *outend, const AVal *bv)
+{
     if ((bv->av_len < 65536 && output + 1 + 2 + bv->av_len > outend) ||
         output + 1 + 4 + bv->av_len > outend)
         return NULL;
@@ -178,7 +189,8 @@ char *
 }
 
 char *
-    AMF_EncodeNumber(char *output, char *outend, double dVal) {
+AMF_EncodeNumber(char *output, char *outend, double dVal)
+{
     if (output + 1 + 8 > outend)
         return NULL;
 
@@ -217,7 +229,7 @@ char *
         co[6] = ci[5];
         co[7] = ci[4];
     }
-#else /* __BYTE_ORDER == __BIG_ENDIAN && __FLOAT_WORD_ORER == __LITTLE_ENDIAN */
+#else                               /* __BYTE_ORDER == __BIG_ENDIAN && __FLOAT_WORD_ORER == __LITTLE_ENDIAN */
     {
         unsigned char *ci, *co;
         ci = (unsigned char *)&dVal;
@@ -238,7 +250,8 @@ char *
 }
 
 char *
-    AMF_EncodeBoolean(char *output, char *outend, int bVal) {
+AMF_EncodeBoolean(char *output, char *outend, int bVal)
+{
     if (output + 2 > outend)
         return NULL;
 
@@ -250,7 +263,8 @@ char *
 }
 
 char *
-    AMF_EncodeNamedString(char *output, char *outend, const AVal *strName, const AVal *strValue) {
+AMF_EncodeNamedString(char *output, char *outend, const AVal *strName, const AVal *strValue)
+{
     if (output + 2 + strName->av_len > outend)
         return NULL;
     output = AMF_EncodeInt16(output, outend, strName->av_len);
@@ -262,7 +276,8 @@ char *
 }
 
 char *
-    AMF_EncodeNamedNumber(char *output, char *outend, const AVal *strName, double dVal) {
+AMF_EncodeNamedNumber(char *output, char *outend, const AVal *strName, double dVal)
+{
     if (output + 2 + strName->av_len > outend)
         return NULL;
     output = AMF_EncodeInt16(output, outend, strName->av_len);
@@ -274,7 +289,8 @@ char *
 }
 
 char *
-    AMF_EncodeNamedBoolean(char *output, char *outend, const AVal *strName, int bVal) {
+AMF_EncodeNamedBoolean(char *output, char *outend, const AVal *strName, int bVal)
+{
     if (output + 2 + strName->av_len > outend)
         return NULL;
     output = AMF_EncodeInt16(output, outend, strName->av_len);
@@ -285,42 +301,51 @@ char *
     return AMF_EncodeBoolean(output, outend, bVal);
 }
 
-void AMFProp_GetName(AMFObjectProperty *prop, AVal *name) {
+void AMFProp_GetName(AMFObjectProperty *prop, AVal *name)
+{
     *name = prop->p_name;
 }
 
-void AMFProp_SetName(AMFObjectProperty *prop, AVal *name) {
+void AMFProp_SetName(AMFObjectProperty *prop, AVal *name)
+{
     prop->p_name = *name;
 }
 
 AMFDataType
-    AMFProp_GetType(AMFObjectProperty *prop) {
+AMFProp_GetType(AMFObjectProperty *prop)
+{
     return prop->p_type;
 }
 
 double
-    AMFProp_GetNumber(AMFObjectProperty *prop) {
+AMFProp_GetNumber(AMFObjectProperty *prop)
+{
     return prop->p_vu.p_number;
 }
 
-int AMFProp_GetBoolean(AMFObjectProperty *prop) {
+int AMFProp_GetBoolean(AMFObjectProperty *prop)
+{
     return prop->p_vu.p_number != 0;
 }
 
-void AMFProp_GetString(AMFObjectProperty *prop, AVal *str) {
+void AMFProp_GetString(AMFObjectProperty *prop, AVal *str)
+{
     *str = prop->p_vu.p_aval;
 }
 
-void AMFProp_GetObject(AMFObjectProperty *prop, AMFObject *obj) {
+void AMFProp_GetObject(AMFObjectProperty *prop, AMFObject *obj)
+{
     *obj = prop->p_vu.p_object;
 }
 
-int AMFProp_IsValid(AMFObjectProperty *prop) {
+int AMFProp_IsValid(AMFObjectProperty *prop)
+{
     return prop->p_type != AMF_INVALID;
 }
 
 char *
-    AMFProp_Encode(AMFObjectProperty *prop, char *pBuffer, char *pBufEnd) {
+AMFProp_Encode(AMFObjectProperty *prop, char *pBuffer, char *pBufEnd)
+{
     if (prop->p_type == AMF_INVALID)
         return NULL;
 
@@ -335,31 +360,31 @@ char *
     }
 
     switch (prop->p_type) {
-        case AMF_NUMBER:
-            pBuffer = AMF_EncodeNumber(pBuffer, pBufEnd, prop->p_vu.p_number);
-            break;
+    case AMF_NUMBER:
+        pBuffer = AMF_EncodeNumber(pBuffer, pBufEnd, prop->p_vu.p_number);
+        break;
 
-        case AMF_BOOLEAN:
-            pBuffer = AMF_EncodeBoolean(pBuffer, pBufEnd, prop->p_vu.p_number != 0);
-            break;
+    case AMF_BOOLEAN:
+        pBuffer = AMF_EncodeBoolean(pBuffer, pBufEnd, prop->p_vu.p_number != 0);
+        break;
 
-        case AMF_STRING:
-            pBuffer = AMF_EncodeString(pBuffer, pBufEnd, &prop->p_vu.p_aval);
-            break;
+    case AMF_STRING:
+        pBuffer = AMF_EncodeString(pBuffer, pBufEnd, &prop->p_vu.p_aval);
+        break;
 
-        case AMF_NULL:
-            if (pBuffer + 1 >= pBufEnd)
-                return NULL;
-            *pBuffer++ = AMF_NULL;
-            break;
+    case AMF_NULL:
+        if (pBuffer + 1 >= pBufEnd)
+            return NULL;
+        *pBuffer++ = AMF_NULL;
+        break;
 
-        case AMF_OBJECT:
-            pBuffer = AMF_Encode(&prop->p_vu.p_object, pBuffer, pBufEnd);
-            break;
+    case AMF_OBJECT:
+        pBuffer = AMF_Encode(&prop->p_vu.p_object, pBuffer, pBufEnd);
+        break;
 
-        default:
-            RTMP_Log(RTMP_LOGERROR, "%s, invalid type. %d", __FUNCTION__, prop->p_type);
-            pBuffer = NULL;
+    default:
+        RTMP_Log(RTMP_LOGERROR, "%s, invalid type. %d", __FUNCTION__, prop->p_type);
+        pBuffer = NULL;
     };
 
     return pBuffer;
@@ -368,13 +393,14 @@ char *
 #define AMF3_INTEGER_MAX 268435455
 #define AMF3_INTEGER_MIN -268435456
 
-int AMF3ReadInteger(const char *data, int32_t *valp) {
+int AMF3ReadInteger(const char *data, int32_t *valp)
+{
     int i = 0;
     int32_t val = 0;
 
-    while (i <= 2) { /* handle first 3 bytes */
-        if (data[i] & 0x80) { /* byte used */
-            val <<= 7; /* shift up */
+    while (i <= 2) {                 /* handle first 3 bytes */
+        if (data[i] & 0x80) {        /* byte used */
+            val <<= 7;               /* shift up */
             val |= (data[i] & 0x7f); /* add bits */
             i++;
         } else {
@@ -399,7 +425,8 @@ int AMF3ReadInteger(const char *data, int32_t *valp) {
     return i > 2 ? 4 : i + 1;
 }
 
-int AMF3ReadString(const char *data, AVal *str) {
+int AMF3ReadString(const char *data, AVal *str)
+{
     int32_t ref = 0;
     int len;
     assert(str != 0);
@@ -425,7 +452,8 @@ int AMF3ReadString(const char *data, AVal *str) {
 }
 
 int AMF3Prop_Decode(AMFObjectProperty *prop, const char *pBuffer, int nSize,
-                    int bDecodeName) {
+                    int bDecodeName)
+{
     int nOriginalSize = nSize;
     AMF3DataType type;
 
@@ -455,82 +483,83 @@ int AMF3Prop_Decode(AMFObjectProperty *prop, const char *pBuffer, int nSize,
     nSize--;
 
     switch (type) {
-        case AMF3_UNDEFINED:
-        case AMF3_NULL:
-            prop->p_type = AMF_NULL;
-            break;
-        case AMF3_FALSE:
-            prop->p_type = AMF_BOOLEAN;
-            prop->p_vu.p_number = 0.0;
-            break;
-        case AMF3_TRUE:
-            prop->p_type = AMF_BOOLEAN;
-            prop->p_vu.p_number = 1.0;
-            break;
-        case AMF3_INTEGER: {
-            int32_t res = 0;
-            int len = AMF3ReadInteger(pBuffer, &res);
-            prop->p_vu.p_number = (double)res;
-            prop->p_type = AMF_NUMBER;
-            nSize -= len;
-            break;
-        }
-        case AMF3_DOUBLE:
+    case AMF3_UNDEFINED:
+    case AMF3_NULL:
+        prop->p_type = AMF_NULL;
+        break;
+    case AMF3_FALSE:
+        prop->p_type = AMF_BOOLEAN;
+        prop->p_vu.p_number = 0.0;
+        break;
+    case AMF3_TRUE:
+        prop->p_type = AMF_BOOLEAN;
+        prop->p_vu.p_number = 1.0;
+        break;
+    case AMF3_INTEGER: {
+        int32_t res = 0;
+        int len = AMF3ReadInteger(pBuffer, &res);
+        prop->p_vu.p_number = (double)res;
+        prop->p_type = AMF_NUMBER;
+        nSize -= len;
+        break;
+    }
+    case AMF3_DOUBLE:
+        if (nSize < 8)
+            return -1;
+        prop->p_vu.p_number = AMF_DecodeNumber(pBuffer);
+        prop->p_type = AMF_NUMBER;
+        nSize -= 8;
+        break;
+    case AMF3_STRING:
+    case AMF3_XML_DOC:
+    case AMF3_XML: {
+        int len = AMF3ReadString(pBuffer, &prop->p_vu.p_aval);
+        prop->p_type = AMF_STRING;
+        nSize -= len;
+        break;
+    }
+    case AMF3_DATE: {
+        int32_t res = 0;
+        int len = AMF3ReadInteger(pBuffer, &res);
+
+        nSize -= len;
+        pBuffer += len;
+
+        if ((res & 0x1) == 0) { /* reference */
+            uint32_t nIndex = (res >> 1);
+            RTMP_Log(RTMP_LOGDEBUG, "AMF3_DATE reference: %d, not supported!", nIndex);
+        } else {
             if (nSize < 8)
                 return -1;
+
             prop->p_vu.p_number = AMF_DecodeNumber(pBuffer);
-            prop->p_type = AMF_NUMBER;
             nSize -= 8;
-            break;
-        case AMF3_STRING:
-        case AMF3_XML_DOC:
-        case AMF3_XML: {
-            int len = AMF3ReadString(pBuffer, &prop->p_vu.p_aval);
-            prop->p_type = AMF_STRING;
-            nSize -= len;
-            break;
+            prop->p_type = AMF_NUMBER;
         }
-        case AMF3_DATE: {
-            int32_t res = 0;
-            int len = AMF3ReadInteger(pBuffer, &res);
-
-            nSize -= len;
-            pBuffer += len;
-
-            if ((res & 0x1) == 0) { /* reference */
-                uint32_t nIndex = (res >> 1);
-                RTMP_Log(RTMP_LOGDEBUG, "AMF3_DATE reference: %d, not supported!", nIndex);
-            } else {
-                if (nSize < 8)
-                    return -1;
-
-                prop->p_vu.p_number = AMF_DecodeNumber(pBuffer);
-                nSize -= 8;
-                prop->p_type = AMF_NUMBER;
-            }
-            break;
-        }
-        case AMF3_OBJECT: {
-            int nRes = AMF3_Decode(&prop->p_vu.p_object, pBuffer, nSize, TRUE);
-            if (nRes == -1)
-                return -1;
-            nSize -= nRes;
-            prop->p_type = AMF_OBJECT;
-            break;
-        }
-        case AMF3_ARRAY:
-        case AMF3_BYTE_ARRAY:
-        default:
-            RTMP_Log(RTMP_LOGDEBUG, "%s - AMF3 unknown/unsupported datatype 0x%02x, @0x%08X",
-                     __FUNCTION__, (unsigned char)(*pBuffer), pBuffer);
+        break;
+    }
+    case AMF3_OBJECT: {
+        int nRes = AMF3_Decode(&prop->p_vu.p_object, pBuffer, nSize, TRUE);
+        if (nRes == -1)
             return -1;
+        nSize -= nRes;
+        prop->p_type = AMF_OBJECT;
+        break;
+    }
+    case AMF3_ARRAY:
+    case AMF3_BYTE_ARRAY:
+    default:
+        RTMP_Log(RTMP_LOGDEBUG, "%s - AMF3 unknown/unsupported datatype 0x%02x, @0x%08X",
+                 __FUNCTION__, (unsigned char)(*pBuffer), pBuffer);
+        return -1;
     }
 
     return nOriginalSize - nSize;
 }
 
 int AMFProp_Decode(AMFObjectProperty *prop, const char *pBuffer, int nSize,
-                   int bDecodeName) {
+                   int bDecodeName)
+{
     int nOriginalSize = nSize;
     int nRes;
 
@@ -571,130 +600,131 @@ int AMFProp_Decode(AMFObjectProperty *prop, const char *pBuffer, int nSize,
 
     prop->p_type = *pBuffer++;
     switch (prop->p_type) {
-        case AMF_NUMBER:
-            if (nSize < 8)
-                return -1;
-            prop->p_vu.p_number = AMF_DecodeNumber(pBuffer);
-            nSize -= 8;
-            break;
-        case AMF_BOOLEAN:
-            if (nSize < 1)
-                return -1;
-            prop->p_vu.p_number = (double)AMF_DecodeBoolean(pBuffer);
-            nSize--;
-            break;
-        case AMF_STRING: {
-            unsigned short nStringSize = AMF_DecodeInt16(pBuffer);
+    case AMF_NUMBER:
+        if (nSize < 8)
+            return -1;
+        prop->p_vu.p_number = AMF_DecodeNumber(pBuffer);
+        nSize -= 8;
+        break;
+    case AMF_BOOLEAN:
+        if (nSize < 1)
+            return -1;
+        prop->p_vu.p_number = (double)AMF_DecodeBoolean(pBuffer);
+        nSize--;
+        break;
+    case AMF_STRING: {
+        unsigned short nStringSize = AMF_DecodeInt16(pBuffer);
 
-            if (nSize < (long)nStringSize + 2)
-                return -1;
-            AMF_DecodeString(pBuffer, &prop->p_vu.p_aval);
-            nSize -= (2 + nStringSize);
-            break;
-        }
-        case AMF_OBJECT: {
-            int nRes = AMF_Decode(&prop->p_vu.p_object, pBuffer, nSize, TRUE);
-            if (nRes == -1)
-                return -1;
-            nSize -= nRes;
-            break;
-        }
-        case AMF_MOVIECLIP: {
-            RTMP_Log(RTMP_LOGERROR, "AMF_MOVIECLIP reserved!");
+        if (nSize < (long)nStringSize + 2)
             return -1;
-            break;
-        }
-        case AMF_NULL:
-        case AMF_UNDEFINED:
-        case AMF_UNSUPPORTED:
-            prop->p_type = AMF_NULL;
-            break;
-        case AMF_REFERENCE: {
-            RTMP_Log(RTMP_LOGERROR, "AMF_REFERENCE not supported!");
+        AMF_DecodeString(pBuffer, &prop->p_vu.p_aval);
+        nSize -= (2 + nStringSize);
+        break;
+    }
+    case AMF_OBJECT: {
+        int nRes = AMF_Decode(&prop->p_vu.p_object, pBuffer, nSize, TRUE);
+        if (nRes == -1)
             return -1;
-            break;
-        }
-        case AMF_ECMA_ARRAY: {
-            nSize -= 4;
+        nSize -= nRes;
+        break;
+    }
+    case AMF_MOVIECLIP: {
+        RTMP_Log(RTMP_LOGERROR, "AMF_MOVIECLIP reserved!");
+        return -1;
+        break;
+    }
+    case AMF_NULL:
+    case AMF_UNDEFINED:
+    case AMF_UNSUPPORTED:
+        prop->p_type = AMF_NULL;
+        break;
+    case AMF_REFERENCE: {
+        RTMP_Log(RTMP_LOGERROR, "AMF_REFERENCE not supported!");
+        return -1;
+        break;
+    }
+    case AMF_ECMA_ARRAY: {
+        nSize -= 4;
 
-            /* next comes the rest, mixed array has a final 0x000009 mark and names, so its an object */
-            nRes = AMF_Decode(&prop->p_vu.p_object, pBuffer + 4, nSize, TRUE);
-            if (nRes == -1)
-                return -1;
-            nSize -= nRes;
-            prop->p_type = AMF_OBJECT;
-            break;
-        }
-        case AMF_OBJECT_END: {
+        /* next comes the rest, mixed array has a final 0x000009 mark and names, so its an object */
+        nRes = AMF_Decode(&prop->p_vu.p_object, pBuffer + 4, nSize, TRUE);
+        if (nRes == -1)
             return -1;
-            break;
-        }
-        case AMF_STRICT_ARRAY: {
-            unsigned int nArrayLen = AMF_DecodeInt32(pBuffer);
-            nSize -= 4;
+        nSize -= nRes;
+        prop->p_type = AMF_OBJECT;
+        break;
+    }
+    case AMF_OBJECT_END: {
+        return -1;
+        break;
+    }
+    case AMF_STRICT_ARRAY: {
+        unsigned int nArrayLen = AMF_DecodeInt32(pBuffer);
+        nSize -= 4;
 
-            nRes = AMF_DecodeArray(&prop->p_vu.p_object, pBuffer + 4, nSize,
-                                   nArrayLen, FALSE);
-            if (nRes == -1)
-                return -1;
-            nSize -= nRes;
-            prop->p_type = AMF_OBJECT;
-            break;
-        }
-        case AMF_DATE: {
-            RTMP_Log(RTMP_LOGDEBUG, "AMF_DATE");
+        nRes = AMF_DecodeArray(&prop->p_vu.p_object, pBuffer + 4, nSize,
+                               nArrayLen, FALSE);
+        if (nRes == -1)
+            return -1;
+        nSize -= nRes;
+        prop->p_type = AMF_OBJECT;
+        break;
+    }
+    case AMF_DATE: {
+        RTMP_Log(RTMP_LOGDEBUG, "AMF_DATE");
 
-            if (nSize < 10)
-                return -1;
+        if (nSize < 10)
+            return -1;
 
-            prop->p_vu.p_number = AMF_DecodeNumber(pBuffer);
-            prop->p_UTCoffset = AMF_DecodeInt16(pBuffer + 8);
+        prop->p_vu.p_number = AMF_DecodeNumber(pBuffer);
+        prop->p_UTCoffset = AMF_DecodeInt16(pBuffer + 8);
 
-            nSize -= 10;
-            break;
-        }
-        case AMF_LONG_STRING: {
-            unsigned int nStringSize = AMF_DecodeInt32(pBuffer);
-            if (nSize < (long)nStringSize + 4)
-                return -1;
-            AMF_DecodeLongString(pBuffer, &prop->p_vu.p_aval);
-            nSize -= (4 + nStringSize);
-            prop->p_type = AMF_STRING;
-            break;
-        }
-        case AMF_RECORDSET: {
-            RTMP_Log(RTMP_LOGERROR, "AMF_RECORDSET reserved!");
+        nSize -= 10;
+        break;
+    }
+    case AMF_LONG_STRING: {
+        unsigned int nStringSize = AMF_DecodeInt32(pBuffer);
+        if (nSize < (long)nStringSize + 4)
             return -1;
-            break;
-        }
-        case AMF_XML_DOC: {
-            RTMP_Log(RTMP_LOGERROR, "AMF_XML_DOC not supported!");
+        AMF_DecodeLongString(pBuffer, &prop->p_vu.p_aval);
+        nSize -= (4 + nStringSize);
+        prop->p_type = AMF_STRING;
+        break;
+    }
+    case AMF_RECORDSET: {
+        RTMP_Log(RTMP_LOGERROR, "AMF_RECORDSET reserved!");
+        return -1;
+        break;
+    }
+    case AMF_XML_DOC: {
+        RTMP_Log(RTMP_LOGERROR, "AMF_XML_DOC not supported!");
+        return -1;
+        break;
+    }
+    case AMF_TYPED_OBJECT: {
+        RTMP_Log(RTMP_LOGERROR, "AMF_TYPED_OBJECT not supported!");
+        return -1;
+        break;
+    }
+    case AMF_AVMPLUS: {
+        int nRes = AMF3_Decode(&prop->p_vu.p_object, pBuffer, nSize, TRUE);
+        if (nRes == -1)
             return -1;
-            break;
-        }
-        case AMF_TYPED_OBJECT: {
-            RTMP_Log(RTMP_LOGERROR, "AMF_TYPED_OBJECT not supported!");
-            return -1;
-            break;
-        }
-        case AMF_AVMPLUS: {
-            int nRes = AMF3_Decode(&prop->p_vu.p_object, pBuffer, nSize, TRUE);
-            if (nRes == -1)
-                return -1;
-            nSize -= nRes;
-            prop->p_type = AMF_OBJECT;
-            break;
-        }
-        default:
-            RTMP_Log(RTMP_LOGDEBUG, "%s - unknown datatype 0x%02x, @0x%08X", __FUNCTION__,
-                     prop->p_type, pBuffer - 1);
-            return -1;
+        nSize -= nRes;
+        prop->p_type = AMF_OBJECT;
+        break;
+    }
+    default:
+        RTMP_Log(RTMP_LOGDEBUG, "%s - unknown datatype 0x%02x, @0x%08X", __FUNCTION__,
+                 prop->p_type, pBuffer - 1);
+        return -1;
     }
 
     return nOriginalSize - nSize;
 }
 
-void AMFProp_Dump(AMFObjectProperty *prop) {
+void AMFProp_Dump(AMFObjectProperty *prop)
+{
     char strRes[256];
     char str[256];
     AVal name;
@@ -727,29 +757,30 @@ void AMFProp_Dump(AMFObjectProperty *prop) {
     }
 
     switch (prop->p_type) {
-        case AMF_NUMBER:
-            snprintf(str, 255, "NUMBER:\t%.2f", prop->p_vu.p_number);
-            break;
-        case AMF_BOOLEAN:
-            snprintf(str, 255, "BOOLEAN:\t%s",
-                     prop->p_vu.p_number != 0.0 ? "TRUE" : "FALSE");
-            break;
-        case AMF_STRING:
-            snprintf(str, 255, "STRING:\t%.*s", prop->p_vu.p_aval.av_len,
-                     prop->p_vu.p_aval.av_val);
-            break;
-        case AMF_DATE:
-            snprintf(str, 255, "DATE:\ttimestamp: %.2f, UTC offset: %d",
-                     prop->p_vu.p_number, prop->p_UTCoffset);
-            break;
-        default:
-            snprintf(str, 255, "INVALID TYPE 0x%02x", (unsigned char)prop->p_type);
+    case AMF_NUMBER:
+        snprintf(str, 255, "NUMBER:\t%.2f", prop->p_vu.p_number);
+        break;
+    case AMF_BOOLEAN:
+        snprintf(str, 255, "BOOLEAN:\t%s",
+                 prop->p_vu.p_number != 0.0 ? "TRUE" : "FALSE");
+        break;
+    case AMF_STRING:
+        snprintf(str, 255, "STRING:\t%.*s", prop->p_vu.p_aval.av_len,
+                 prop->p_vu.p_aval.av_val);
+        break;
+    case AMF_DATE:
+        snprintf(str, 255, "DATE:\ttimestamp: %.2f, UTC offset: %d",
+                 prop->p_vu.p_number, prop->p_UTCoffset);
+        break;
+    default:
+        snprintf(str, 255, "INVALID TYPE 0x%02x", (unsigned char)prop->p_type);
     }
 
     RTMP_Log(RTMP_LOGDEBUG, "Property: <%s%s>", strRes, str);
 }
 
-void AMFProp_Reset(AMFObjectProperty *prop) {
+void AMFProp_Reset(AMFObjectProperty *prop)
+{
     if (prop->p_type == AMF_OBJECT)
         AMF_Reset(&prop->p_vu.p_object);
     else {
@@ -762,7 +793,8 @@ void AMFProp_Reset(AMFObjectProperty *prop) {
 /* AMFObject */
 
 char *
-    AMF_Encode(AMFObject *obj, char *pBuffer, char *pBufEnd) {
+AMF_Encode(AMFObject *obj, char *pBuffer, char *pBufEnd)
+{
     int i;
 
     if (pBuffer + 4 >= pBufEnd)
@@ -790,7 +822,8 @@ char *
 }
 
 int AMF_DecodeArray(AMFObject *obj, const char *pBuffer, int nSize,
-                    int nArrayLen, int bDecodeName) {
+                    int nArrayLen, int bDecodeName)
+{
     int nOriginalSize = nSize;
     int bError = FALSE;
 
@@ -816,7 +849,8 @@ int AMF_DecodeArray(AMFObject *obj, const char *pBuffer, int nSize,
     return nOriginalSize - nSize;
 }
 
-int AMF3_Decode(AMFObject *obj, const char *pBuffer, int nSize, int bAMFData) {
+int AMF3_Decode(AMFObject *obj, const char *pBuffer, int nSize, int bAMFData)
+{
     int nOriginalSize = nSize;
     int32_t ref;
     int len;
@@ -935,7 +969,8 @@ int AMF3_Decode(AMFObject *obj, const char *pBuffer, int nSize, int bAMFData) {
     return nOriginalSize - nSize;
 }
 
-int AMF_Decode(AMFObject *obj, const char *pBuffer, int nSize, int bDecodeName) {
+int AMF_Decode(AMFObject *obj, const char *pBuffer, int nSize, int bDecodeName)
+{
     int nOriginalSize = nSize;
     int bError = FALSE; /* if there is an error while decoding - try to at least find the end mark AMF_OBJECT_END */
 
@@ -975,19 +1010,22 @@ int AMF_Decode(AMFObject *obj, const char *pBuffer, int nSize, int bDecodeName) 
     return nOriginalSize - nSize;
 }
 
-void AMF_AddProp(AMFObject *obj, const AMFObjectProperty *prop) {
+void AMF_AddProp(AMFObject *obj, const AMFObjectProperty *prop)
+{
     if (!(obj->o_num & 0x0f))
         obj->o_props =
             realloc(obj->o_props, (obj->o_num + 16) * sizeof(AMFObjectProperty));
     obj->o_props[obj->o_num++] = *prop;
 }
 
-int AMF_CountProp(AMFObject *obj) {
+int AMF_CountProp(AMFObject *obj)
+{
     return obj->o_num;
 }
 
 AMFObjectProperty *
-    AMF_GetProp(AMFObject *obj, const AVal *name, int nIndex) {
+AMF_GetProp(AMFObject *obj, const AVal *name, int nIndex)
+{
     if (nIndex >= 0) {
         if (nIndex <= obj->o_num)
             return &obj->o_props[nIndex];
@@ -1002,7 +1040,8 @@ AMFObjectProperty *
     return (AMFObjectProperty *)&AMFProp_Invalid;
 }
 
-void AMF_Dump(AMFObject *obj) {
+void AMF_Dump(AMFObject *obj)
+{
     int n;
     RTMP_Log(RTMP_LOGDEBUG, "(object begin)");
     for (n = 0; n < obj->o_num; n++) {
@@ -1011,7 +1050,8 @@ void AMF_Dump(AMFObject *obj) {
     RTMP_Log(RTMP_LOGDEBUG, "(object end)");
 }
 
-void AMF_Reset(AMFObject *obj) {
+void AMF_Reset(AMFObject *obj)
+{
     int n;
     for (n = 0; n < obj->o_num; n++) {
         AMFProp_Reset(&obj->o_props[n]);
@@ -1023,14 +1063,16 @@ void AMF_Reset(AMFObject *obj) {
 
 /* AMF3ClassDefinition */
 
-void AMF3CD_AddProp(AMF3ClassDef *cd, AVal *prop) {
+void AMF3CD_AddProp(AMF3ClassDef *cd, AVal *prop)
+{
     if (!(cd->cd_num & 0x0f))
         cd->cd_props = realloc(cd->cd_props, (cd->cd_num + 16) * sizeof(AVal));
     cd->cd_props[cd->cd_num++] = *prop;
 }
 
 AVal *
-    AMF3CD_GetProp(AMF3ClassDef *cd, int nIndex) {
+AMF3CD_GetProp(AMF3ClassDef *cd, int nIndex)
+{
     if (nIndex >= cd->cd_num)
         return (AVal *)&AV_empty;
     return &cd->cd_props[nIndex];

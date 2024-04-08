@@ -8,5 +8,4 @@ extern NSString *const kGPUImageYUVVideoRangeConversionForRGFragmentShaderString
 extern NSString *const kGPUImageYUVFullRangeConversionForLAFragmentShaderString;
 extern NSString *const kGPUImageYUVVideoRangeConversionForLAFragmentShaderString;
 
-
 #endif /* GPUImageColorConversion_h */

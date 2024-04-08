@@ -1,42 +1,39 @@
-#import <Foundation/Foundation.h>
-#import <AVFoundation/AVFoundation.h>
-#import <CoreMedia/CoreMedia.h>
+#import "GPUImageColorConversion.h"
 #import "GPUImageContext.h"
 #import "GPUImageOutput.h"
-#import "GPUImageColorConversion.h"
+#import <AVFoundation/AVFoundation.h>
+#import <CoreMedia/CoreMedia.h>
+#import <Foundation/Foundation.h>
 
-//Optionally override the YUV to RGB matrices
-void setColorConversion601( GLfloat conversionMatrix[9] );
-void setColorConversion601FullRange( GLfloat conversionMatrix[9] );
-void setColorConversion709( GLfloat conversionMatrix[9] );
+// Optionally override the YUV to RGB matrices
+void setColorConversion601(GLfloat conversionMatrix[9]);
+void setColorConversion601FullRange(GLfloat conversionMatrix[9]);
+void setColorConversion709(GLfloat conversionMatrix[9]);
 
-
-//Delegate Protocal for Face Detection.
+// Delegate Protocal for Face Detection.
 @protocol GPUImageVideoCameraDelegate <NSObject>
 
 @optional
 - (void)willOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer;
 @end
 
-
 /**
  A GPUImageOutput that provides frames from either camera
 */
-@interface GPUImageVideoCamera : GPUImageOutput <AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate>
-{
+@interface GPUImageVideoCamera : GPUImageOutput <AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate> {
     NSUInteger numberOfFramesCaptured;
     CGFloat totalFrameTimeDuringCapture;
-    
+
     AVCaptureSession *_captureSession;
     AVCaptureDevice *_inputCamera;
     AVCaptureDevice *_microphone;
     AVCaptureDeviceInput *videoInput;
-	AVCaptureVideoDataOutput *videoOutput;
+    AVCaptureVideoDataOutput *videoOutput;
 
     BOOL capturePaused;
     GPUImageRotationMode outputRotation, internalRotation;
     dispatch_semaphore_t frameRenderingSemaphore;
-        
+
     BOOL captureAsYUV;
     GLuint luminanceTexture, chrominanceTexture;
 
@@ -44,10 +41,10 @@ void setColorConversion709( GLfloat conversionMatrix[9] );
 }
 
 /// Whether or not the underlying AVCaptureSession is running
-@property(readonly, nonatomic) BOOL isRunning;
+@property (readonly, nonatomic) BOOL isRunning;
 
 /// The AVCaptureSession used to capture from the camera
-@property(readonly, retain, nonatomic) AVCaptureSession *captureSession;
+@property (readonly, retain, nonatomic) AVCaptureSession *captureSession;
 
 /// This enables the capture session preset to be changed on the fly
 @property (readwrite, nonatomic, copy) NSString *captureSessionPreset;
@@ -59,36 +56,36 @@ void setColorConversion709( GLfloat conversionMatrix[9] );
 @property (readwrite) int32_t frameRate;
 
 /// Easy way to tell which cameras are present on device
-@property (readonly, getter = isFrontFacingCameraPresent) BOOL frontFacingCameraPresent;
-@property (readonly, getter = isBackFacingCameraPresent) BOOL backFacingCameraPresent;
+@property (readonly, getter=isFrontFacingCameraPresent) BOOL frontFacingCameraPresent;
+@property (readonly, getter=isBackFacingCameraPresent) BOOL backFacingCameraPresent;
 
 /// This enables the benchmarking mode, which logs out instantaneous and average frame times to the console
-@property(readwrite, nonatomic) BOOL runBenchmark;
+@property (readwrite, nonatomic) BOOL runBenchmark;
 
 /// Use this property to manage camera settings. Focus point, exposure point, etc.
-@property(readonly) AVCaptureDevice *inputCamera;
+@property (readonly) AVCaptureDevice *inputCamera;
 
 /// This determines the rotation applied to the output image, based on the source material
-@property(readwrite, nonatomic) UIInterfaceOrientation outputImageOrientation;
+@property (readwrite, nonatomic) UIInterfaceOrientation outputImageOrientation;
 
 /// These properties determine whether or not the two camera orientations should be mirrored. By default, both are NO.
-@property(readwrite, nonatomic) BOOL horizontallyMirrorFrontFacingCamera, horizontallyMirrorRearFacingCamera;
+@property (readwrite, nonatomic) BOOL horizontallyMirrorFrontFacingCamera, horizontallyMirrorRearFacingCamera;
 
-@property(nonatomic, assign) id<GPUImageVideoCameraDelegate> delegate;
+@property (nonatomic, assign) id<GPUImageVideoCameraDelegate> delegate;
 
 /// @name Initialization and teardown
 
 /** Begin a capture session
- 
+
  See AVCaptureSession for acceptable values
- 
+
  @param sessionPreset Session preset to use
  @param cameraPosition Camera to capture from
  */
 - (id)initWithSessionPreset:(NSString *)sessionPreset cameraPosition:(AVCaptureDevicePosition)cameraPosition;
 
 /** Add audio capture to the session. Adding inputs and outputs freezes the capture session momentarily, so you
-    can use this method to add the audio inputs and outputs early, if you're going to set the audioEncodingTarget 
+    can use this method to add the audio inputs and outputs early, if you're going to set the audioEncodingTarget
     later. Returns YES is the audio inputs and outputs were added, or NO if they had already been added.
  */
 - (BOOL)addAudioInputsAndOutputs;

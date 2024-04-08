@@ -15,8 +15,7 @@ typedef NS_ENUM(NSUInteger, GPUImageSkinToneUpperColor) {
 
 extern NSString *const kGPUImageSkinToneFragmentShaderString;
 
-@interface GPUImageSkinToneFilter : GPUImageFilter
-{
+@interface GPUImageSkinToneFilter : GPUImageFilter {
     GLint skinToneAdjustUniform;
     GLint skinHueUniform;
     GLint skinHueThresholdUniform;

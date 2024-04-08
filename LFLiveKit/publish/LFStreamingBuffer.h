@@ -6,16 +6,15 @@
 //  Copyright © 2016年 LaiFeng All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import "LFAudioFrame.h"
 #import "LFVideoFrame.h"
-
+#import <Foundation/Foundation.h>
 
 /** current buffer status */
-typedef NS_ENUM (NSUInteger, LFLiveBuffferState) {
-    LFLiveBuffferUnknown = 0,      //< 未知
-    LFLiveBuffferIncrease = 1,    //< 缓冲区状态差应该降低码率
-    LFLiveBuffferDecline = 2      //< 缓冲区状态好应该提升码率
+typedef NS_ENUM(NSUInteger, LFLiveBuffferState) {
+    LFLiveBuffferUnknown = 0,  // 未知
+    LFLiveBuffferIncrease = 1, // 缓冲区状态差应该降低码率
+    LFLiveBuffferDecline = 2   // 缓冲区状态好应该提升码率
 };
 
 @class LFStreamingBuffer;
@@ -28,12 +27,11 @@ typedef NS_ENUM (NSUInteger, LFLiveBuffferState) {
 
 @interface LFStreamingBuffer : NSObject
 
-
 /** The delegate of the buffer. buffer callback */
-@property (nullable, nonatomic, weak) id <LFStreamingBufferDelegate> delegate;
+@property (nullable, nonatomic, weak) id<LFStreamingBufferDelegate> delegate;
 
 /** current frame buffer */
-@property (nonatomic, strong, readonly) NSMutableArray <LFFrame *> *_Nonnull list;
+@property (nonatomic, strong, readonly) NSMutableArray<LFFrame *> *_Nonnull list;
 
 /** buffer count max size default 1000 */
 @property (nonatomic, assign) NSUInteger maxCount;

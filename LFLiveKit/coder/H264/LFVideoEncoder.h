@@ -6,14 +6,13 @@
 //  Copyright (c) 2013 GDCL http://www.gdcl.co.uk/license.htm
 //
 
-#import <Foundation/Foundation.h>
 #import <AVFoundation/AVAssetWriter.h>
 #import <AVFoundation/AVAssetWriterInput.h>
 #import <AVFoundation/AVMediaFormat.h>
 #import <AVFoundation/AVVideoSettings.h>
+#import <Foundation/Foundation.h>
 
 @interface LFVideoEncoder : NSObject
-
 
 @property NSString *path;
 @property (nonatomic, readonly) NSUInteger bitrate;

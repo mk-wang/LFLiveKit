@@ -6,33 +6,32 @@
 
 - (id)init;
 {
-    if (!(self = [super init]))
-    {
-		return nil;
+    if (!(self = [super init])) {
+        return nil;
     }
-    
+
     // Take in the frame and blend it with the previous one
     dissolveBlendFilter = [[GPUImageDissolveBlendFilter alloc] init];
     [self addFilter:dissolveBlendFilter];
-    
+
     // Buffer the result to be fed back into the blend
     bufferFilter = [[GPUImageBuffer alloc] init];
     [self addFilter:bufferFilter];
-    
+
     // Texture location 0 needs to be the original image for the dissolve blend
     [bufferFilter addTarget:dissolveBlendFilter atTextureLocation:1];
     [dissolveBlendFilter addTarget:bufferFilter];
-    
+
     [dissolveBlendFilter disableSecondFrameCheck];
-    
+
     // To prevent double updating of this filter, disable updates from the sharp image side
     //    self.inputFilterToIgnoreForUpdates = unsharpMaskFilter;
-    
+
     self.initialFilters = [NSArray arrayWithObject:dissolveBlendFilter];
     self.terminalFilter = dissolveBlendFilter;
-    
+
     self.filterStrength = 0.5;
-    
+
     return self;
 }
 
@@ -52,7 +51,7 @@
 - (void)addTarget:(id<GPUImageInput>)newTarget atTextureLocation:(NSInteger)textureLocation;
 {
     [self.terminalFilter addTarget:newTarget atTextureLocation:textureLocation];
-    //if use GPUImagePipline,will cause self.termainlFilter removeAllTargets,so need add bufferFilter back
+    // if use GPUImagePipline,will cause self.termainlFilter removeAllTargets,so need add bufferFilter back
     if (self.terminalFilter == dissolveBlendFilter && ![self.terminalFilter.targets containsObject:bufferFilter]) {
         [self.terminalFilter addTarget:bufferFilter atTextureLocation:1];
     }

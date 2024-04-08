@@ -1,7 +1,6 @@
 #import "GPUImageTwoInputFilter.h"
 
-@interface GPUImageLookupFilter : GPUImageTwoInputFilter
-{
+@interface GPUImageLookupFilter : GPUImageTwoInputFilter {
     GLint intensityUniform;
 }
 
@@ -16,7 +15,7 @@
 
 // Additional Info:
 // Lookup texture is organised as 8x8 quads of 64x64 pixels representing all possible RGB colors:
-//for (int by = 0; by < 8; by++) {
+// for (int by = 0; by < 8; by++) {
 //    for (int bx = 0; bx < 8; bx++) {
 //        for (int g = 0; g < 64; g++) {
 //            for (int r = 0; r < 64; r++) {
@@ -29,6 +28,6 @@
 //}
 
 // Opacity/intensity of lookup filter ranges from 0.0 to 1.0, with 1.0 as the normal setting
-@property(readwrite, nonatomic) CGFloat intensity;
+@property (readwrite, nonatomic) CGFloat intensity;
 
 @end

@@ -1,13 +1,12 @@
 #import "GPUImageFilter.h"
 
-@interface GPUImageTwoPassFilter : GPUImageFilter
-{
+@interface GPUImageTwoPassFilter : GPUImageFilter {
     GPUImageFramebuffer *secondOutputFramebuffer;
 
     GLProgram *secondFilterProgram;
     GLint secondFilterPositionAttribute, secondFilterTextureCoordinateAttribute;
     GLint secondFilterInputTextureUniform, secondFilterInputTextureUniform2;
-    
+
     NSMutableDictionary *secondProgramUniformStateRestorationBlocks;
 }
 

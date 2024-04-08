@@ -28,37 +28,36 @@ void reportAvailableMemoryForGPUImage(NSString *tag);
 @class GPUImageMovieWriter;
 
 /** GPUImage's base source object
- 
+
  Images or frames of video are uploaded from source objects, which are subclasses of GPUImageOutput. These include:
- 
- - GPUImageVideoCamera (for live video from an iOS camera) 
+
+ - GPUImageVideoCamera (for live video from an iOS camera)
  - GPUImageStillCamera (for taking photos with the camera)
  - GPUImagePicture (for still images)
  - GPUImageMovie (for movies)
- 
+
  Source objects upload still image frames to OpenGL ES as textures, then hand those textures off to the next objects in the processing chain.
  */
-@interface GPUImageOutput : NSObject
-{
+@interface GPUImageOutput : NSObject {
     GPUImageFramebuffer *outputFramebuffer;
-    
+
     NSMutableArray *targets, *targetTextureIndices;
-    
+
     CGSize inputTextureSize, cachedMaximumOutputSize, forcedMaximumSize;
-    
+
     BOOL overrideInputSize;
-    
+
     BOOL allTargetsWantMonochromeData;
     BOOL usingNextFrameForImageCapture;
 }
 
-@property(readwrite, nonatomic) BOOL shouldSmoothlyScaleOutput;
-@property(readwrite, nonatomic) BOOL shouldIgnoreUpdatesToThisTarget;
-@property(readwrite, nonatomic, retain) GPUImageMovieWriter *audioEncodingTarget;
-@property(readwrite, nonatomic, unsafe_unretained) id<GPUImageInput> targetToIgnoreForUpdates;
-@property(nonatomic, copy) void(^frameProcessingCompletionBlock)(GPUImageOutput*, CMTime);
-@property(nonatomic) BOOL enabled;
-@property(readwrite, nonatomic) GPUTextureOptions outputTextureOptions;
+@property (readwrite, nonatomic) BOOL shouldSmoothlyScaleOutput;
+@property (readwrite, nonatomic) BOOL shouldIgnoreUpdatesToThisTarget;
+@property (readwrite, nonatomic, retain) GPUImageMovieWriter *audioEncodingTarget;
+@property (readwrite, nonatomic, unsafe_unretained) id<GPUImageInput> targetToIgnoreForUpdates;
+@property (nonatomic, copy) void (^frameProcessingCompletionBlock)(GPUImageOutput *, CMTime);
+@property (nonatomic) BOOL enabled;
+@property (readwrite, nonatomic) GPUTextureOptions outputTextureOptions;
 
 /// @name Managing targets
 - (void)setInputFramebufferForTarget:(id<GPUImageInput>)target atIndex:(NSInteger)inputTextureIndex;
@@ -68,28 +67,28 @@ void reportAvailableMemoryForGPUImage(NSString *tag);
 
 /** Returns an array of the current targets.
  */
-- (NSArray*)targets;
+- (NSArray *)targets;
 
 /** Adds a target to receive notifications when new frames are available.
- 
+
  The target will be asked for its next available texture.
- 
+
  See [GPUImageInput newFrameReadyAtTime:]
- 
+
  @param newTarget Target to be added
  */
 - (void)addTarget:(id<GPUImageInput>)newTarget;
 
 /** Adds a target to receive notifications when new frames are available.
- 
+
  See [GPUImageInput newFrameReadyAtTime:]
- 
+
  @param newTarget Target to be added
  */
 - (void)addTarget:(id<GPUImageInput>)newTarget atTextureLocation:(NSInteger)textureLocation;
 
 /** Removes a target. The target will no longer receive notifications when new frames are available.
- 
+
  @param targetToRemove Target to be removed
  */
 - (void)removeTarget:(id<GPUImageInput>)targetToRemove;
