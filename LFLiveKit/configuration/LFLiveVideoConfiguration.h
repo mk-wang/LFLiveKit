@@ -29,7 +29,7 @@ typedef struct _LFLiveVideoQuality
 } LFLiveVideoQuality;
 
 // high: true 30 fps, false 24 fps
-LFLiveVideoQuality makeQuality(BOOL high, LFLiveVideoSessionPreset preset);
+LFLiveVideoQuality makeVideoQuality(BOOL high, LFLiveVideoSessionPreset preset);
 
 @interface LFLiveVideoConfiguration : NSObject <NSCoding, NSCopying>
 

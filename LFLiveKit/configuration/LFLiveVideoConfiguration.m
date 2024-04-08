@@ -61,7 +61,7 @@ AVCaptureSessionPreset avSessionPresetOf(LFLiveVideoSessionPreset prsent)
     return avSessionPreset;
 }
 
-LFLiveVideoQuality makeQuality(BOOL high, LFLiveVideoSessionPreset preset)
+LFLiveVideoQuality makeVideoQuality(BOOL high, LFLiveVideoSessionPreset preset)
 {
     return (LFLiveVideoQuality){
         .high = high,
@@ -75,7 +75,7 @@ LFLiveVideoQuality makeQuality(BOOL high, LFLiveVideoSessionPreset preset)
 
 + (instancetype)defaultConfiguration
 {
-    LFLiveVideoQuality quality = makeQuality(YES, LFCaptureSessionPreset360x640);
+    LFLiveVideoQuality quality = makeVideoQuality(YES, LFCaptureSessionPreset360x640);
     LFLiveVideoConfiguration *configuration = [LFLiveVideoConfiguration defaultConfigurationForQuality:quality];
     return configuration;
 }
