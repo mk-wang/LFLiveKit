@@ -6,42 +6,30 @@
 //  Copyright © 2016年 LaiFeng All rights reserved.
 //
 
+#import <AVFoundation/AVFoundation.h>
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
 /// 视频分辨率(都是16：9 当此设备不支持当前分辨率，自动降低一级)
 typedef NS_ENUM(NSUInteger, LFLiveVideoSessionPreset) {
-    /// 低分辨率
     LFCaptureSessionPreset360x640 = 0,
-    /// 中分辨率
     LFCaptureSessionPreset540x960 = 1,
-    /// 高分辨率
-    LFCaptureSessionPreset720x1280 = 2
+    LFCaptureSessionPreset720x1280 = 2,
+    LFCaptureSessionPreset1920x1080 = 3,
+    LFCaptureSessionPreset3840x2160 = 4,
 };
 
-/// 视频质量
-typedef NS_ENUM(NSUInteger, LFLiveVideoQuality) {
-    /// 分辨率： 360 *640 帧数：15 码率：500Kps
-    LFLiveVideoQuality_Low1 = 0,
-    /// 分辨率： 360 *640 帧数：24 码率：800Kps
-    LFLiveVideoQuality_Low2 = 1,
-    /// 分辨率： 360 *640 帧数：30 码率：800Kps
-    LFLiveVideoQuality_Low3 = 2,
-    /// 分辨率： 540 *960 帧数：15 码率：800Kps
-    LFLiveVideoQuality_Medium1 = 3,
-    /// 分辨率： 540 *960 帧数：24 码率：800Kps
-    LFLiveVideoQuality_Medium2 = 4,
-    /// 分辨率： 540 *960 帧数：30 码率：800Kps
-    LFLiveVideoQuality_Medium3 = 5,
-    /// 分辨率： 720 *1280 帧数：15 码率：1000Kps
-    LFLiveVideoQuality_High1 = 6,
-    /// 分辨率： 720 *1280 帧数：24 码率：1200Kps
-    LFLiveVideoQuality_High2 = 7,
-    /// 分辨率： 720 *1280 帧数：30 码率：1200Kps
-    LFLiveVideoQuality_High3 = 8,
-    /// 默认配置
-    LFLiveVideoQuality_Default = LFLiveVideoQuality_Low2
-};
+CGSize videoSizeOf(LFLiveVideoSessionPreset prsent);
+AVCaptureSessionPreset avSessionPresetOf(LFLiveVideoSessionPreset prsent);
+
+typedef struct _LFLiveVideoQuality
+{
+    BOOL high;
+    LFLiveVideoSessionPreset preset;
+} LFLiveVideoQuality;
+
+// high: true 30 fps, false 24 fps
+LFLiveVideoQuality makeQuality(BOOL high, LFLiveVideoSessionPreset preset);
 
 @interface LFLiveVideoConfiguration : NSObject <NSCoding, NSCopying>
 
@@ -94,7 +82,7 @@ typedef NS_ENUM(NSUInteger, LFLiveVideoQuality) {
 @property (nonatomic, assign) LFLiveVideoSessionPreset sessionPreset;
 
 /// ≈sde3分辨率
-@property (nonatomic, assign, readonly) NSString *avSessionPreset;
+@property (nonatomic, assign, readonly) AVCaptureSessionPreset avSessionPreset;
 
 /// 是否是横屏
 @property (nonatomic, assign, readonly) BOOL landscape;
