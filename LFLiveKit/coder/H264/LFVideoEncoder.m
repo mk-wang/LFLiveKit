@@ -8,8 +8,7 @@
 
 #import "LFVideoEncoder.h"
 
-@implementation LFVideoEncoder
-{
+@implementation LFVideoEncoder {
     AVAssetWriter *_writer;
     AVAssetWriterInput *_writerInput;
     NSString *_path;
@@ -17,13 +16,15 @@
 
 @synthesize path = _path;
 
-+ (LFVideoEncoder *)encoderForPath:(NSString *)path Height:(int)height andWidth:(int)width bitrate:(int)bitrate {
++ (LFVideoEncoder *)encoderForPath:(NSString *)path Height:(int)height andWidth:(int)width bitrate:(int)bitrate
+{
     LFVideoEncoder *enc = [LFVideoEncoder alloc];
     [enc initPath:path Height:height andWidth:width bitrate:bitrate];
     return enc;
 }
 
-- (void)initPath:(NSString *)path Height:(int)height andWidth:(int)width bitrate:(int)bitrate {
+- (void)initPath:(NSString *)path Height:(int)height andWidth:(int)width bitrate:(int)bitrate
+{
     self.path = path;
     _bitrate = bitrate;
 
@@ -31,14 +32,14 @@
     NSURL *url = [NSURL fileURLWithPath:self.path];
 
     NSDictionary *settings = @{
-        AVVideoCodecKey: AVVideoCodecTypeH264,
-        AVVideoWidthKey: @(width),
-        AVVideoHeightKey: @(height),
-        AVVideoCompressionPropertiesKey: @{
-            AVVideoAverageBitRateKey: @(self.bitrate),
-            AVVideoMaxKeyFrameIntervalKey: @(30 * 2),
-            AVVideoProfileLevelKey: AVVideoProfileLevelH264Baseline41,
-            AVVideoAllowFrameReorderingKey: @NO,
+        AVVideoCodecKey : AVVideoCodecTypeH264,
+        AVVideoWidthKey : @(width),
+        AVVideoHeightKey : @(height),
+        AVVideoCompressionPropertiesKey : @{
+            AVVideoAverageBitRateKey : @(self.bitrate),
+            AVVideoMaxKeyFrameIntervalKey : @(30 * 2),
+            AVVideoProfileLevelKey : AVVideoProfileLevelH264Baseline41,
+            AVVideoAllowFrameReorderingKey : @NO,
         }
     };
     _writerInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo outputSettings:settings];
@@ -48,13 +49,15 @@
     [_writer addInput:_writerInput];
 }
 
-- (void)finishWithCompletionHandler:(void (^)(void))handler {
+- (void)finishWithCompletionHandler:(void (^)(void))handler
+{
     if (_writer.status == AVAssetWriterStatusWriting) {
         [_writer finishWritingWithCompletionHandler:handler];
     }
 }
 
-- (BOOL)encodeFrame:(CMSampleBufferRef)sampleBuffer {
+- (BOOL)encodeFrame:(CMSampleBufferRef)sampleBuffer
+{
     if (CMSampleBufferDataIsReady(sampleBuffer)) {
         if (_writer.status == AVAssetWriterStatusUnknown) {
             CMTime startTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
@@ -62,7 +65,7 @@
             [_writer startSessionAtSourceTime:startTime];
         }
         if (_writer.status == AVAssetWriterStatusFailed) {
-            //NSLog(@"AVAssetWriterStatusFailed");
+            // NSLog(@"AVAssetWriterStatusFailed");
             return NO;
         }
         if (_writerInput.readyForMoreMediaData == YES) {

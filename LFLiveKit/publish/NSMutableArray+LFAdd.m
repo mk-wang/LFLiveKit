@@ -10,13 +10,15 @@
 
 @implementation NSMutableArray (YYAdd)
 
-- (void)lfRemoveFirstObject {
+- (void)lfRemoveFirstObject
+{
     if (self.count) {
         [self removeObjectAtIndex:0];
     }
 }
 
-- (id)lfPopFirstObject {
+- (id)lfPopFirstObject
+{
     id obj = nil;
     if (self.count) {
         obj = self.firstObject;

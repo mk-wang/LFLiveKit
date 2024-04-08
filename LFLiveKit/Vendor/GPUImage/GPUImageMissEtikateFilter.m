@@ -1,14 +1,13 @@
 #import "GPUImageMissEtikateFilter.h"
-#import "GPUImagePicture.h"
 #import "GPUImageLookupFilter.h"
+#import "GPUImagePicture.h"
 
 @implementation GPUImageMissEtikateFilter
 
 - (id)init;
 {
-    if (!(self = [super init]))
-    {
-		return nil;
+    if (!(self = [super init])) {
+        return nil;
     }
 
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE

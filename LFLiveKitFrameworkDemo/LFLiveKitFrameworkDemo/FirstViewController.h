@@ -10,6 +10,4 @@
 
 @interface FirstViewController : PushViewController
 
-
 @end
-

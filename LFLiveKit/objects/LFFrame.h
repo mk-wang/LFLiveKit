@@ -10,9 +10,9 @@
 
 @interface LFFrame : NSObject
 
-@property (nonatomic, assign,) uint64_t timestamp;
+@property (nonatomic, assign, ) uint64_t timestamp;
 @property (nonatomic, strong) NSData *data;
-///< flv或者rtmp包头
+/// flv或者rtmp包头
 @property (nonatomic, strong) NSData *header;
 
 @end

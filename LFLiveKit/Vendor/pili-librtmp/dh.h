@@ -51,7 +51,8 @@ typedef mpi *MP_t;
     MP_new(u);                 \
     mpi_read_binary(u, buf, len)
 
-typedef struct MDH {
+typedef struct MDH
+{
     MP_t p;
     MP_t g;
     MP_t pub_key;
@@ -72,7 +73,8 @@ typedef struct MDH {
         free(dh);              \
     }
 
-static int MDH_generate_key(MDH *dh) {
+static int MDH_generate_key(MDH *dh)
+{
     unsigned char out[2];
     MP_set(&dh->ctx.P, dh->p);
     MP_set(&dh->ctx.G, dh->g);
@@ -85,7 +87,8 @@ static int MDH_generate_key(MDH *dh) {
     return 1;
 }
 
-static int MDH_compute_key(uint8_t *secret, size_t len, MP_t pub, MDH *dh) {
+static int MDH_compute_key(uint8_t *secret, size_t len, MP_t pub, MDH *dh)
+{
     int n = len;
     MP_set(&dh->ctx.GY, pub);
     dhm_calc_secret(&dh->ctx, secret, &n);
@@ -111,7 +114,8 @@ typedef gcry_mpi_t MP_t;
 #define MP_getbin(u, buf, len) \
     gcry_mpi_scan(&u, GCRYMPI_FMT_USG, buf, len, NULL)
 
-typedef struct MDH {
+typedef struct MDH
+{
     MP_t p;
     MP_t g;
     MP_t pub_key;
@@ -134,7 +138,8 @@ extern MP_t gnutls_calc_dh_key(MP_t y, MP_t x, MP_t p);
 
 #define MDH_generate_key(dh) \
     (dh->pub_key = gnutls_calc_dh_secret(&dh->priv_key, dh->g, dh->p))
-static int MDH_compute_key(uint8_t *secret, size_t len, MP_t pub, MDH *dh) {
+static int MDH_compute_key(uint8_t *secret, size_t len, MP_t pub, MDH *dh)
+{
     MP_t sec = gnutls_calc_dh_key(pub, dh->priv_key, dh->p);
     if (sec) {
         MP_setbin(sec, secret, len);
@@ -179,7 +184,8 @@ typedef BIGNUM *MP_t;
 #include "log.h"
 
 /* RFC 2631, Section 2.1.5, http://www.ietf.org/rfc/rfc2631.txt */
-static int isValidPublicKey(MP_t y, MP_t p, MP_t q) {
+static int isValidPublicKey(MP_t y, MP_t p, MP_t q)
+{
     int ret = TRUE;
     MP_t bn;
     assert(y);
@@ -205,11 +211,11 @@ static int isValidPublicKey(MP_t y, MP_t p, MP_t q) {
     }
 
     /* Verify with Sophie-Germain prime
- *
- * This is a nice test to make sure the public key position is calculated
- * correctly. This test will fail in about 50% of the cases if applied to
- * random data.
- */
+     *
+     * This is a nice test to make sure the public key position is calculated
+     * correctly. This test will fail in about 50% of the cases if applied to
+     * random data.
+     */
     if (q) {
         /* y must fulfill y^q mod p = 1 */
         MP_modexp(bn, y, q, p);
@@ -224,7 +230,8 @@ failed:
     return ret;
 }
 
-static MDH *DHInit(int nKeyBits) {
+static MDH *DHInit(int nKeyBits)
+{
     size_t res;
     MDH *dh = MDH_new();
 
@@ -253,7 +260,8 @@ failed:
     return 0;
 }
 
-static int DHGenerateKey(MDH *dh) {
+static int DHGenerateKey(MDH *dh)
+{
     size_t res = 0;
     if (!dh)
         return 0;
@@ -283,7 +291,8 @@ static int DHGenerateKey(MDH *dh) {
  * 00 00 00 00 00 x1 x2 x3 .....
  */
 
-static int DHGetPublicKey(MDH *dh, uint8_t *pubkey, size_t nPubkeyLen) {
+static int DHGetPublicKey(MDH *dh, uint8_t *pubkey, size_t nPubkeyLen)
+{
     int len;
     if (!dh || !dh->pub_key)
         return 0;
@@ -318,7 +327,8 @@ DHGetPrivateKey(MDH *dh, uint8_t *privkey, size_t nPrivkeyLen)
  * other party's public key (pubkey)
  */
 static int DHComputeSharedSecretKey(MDH *dh, uint8_t *pubkey, size_t nPubkeyLen,
-                                    uint8_t *secret) {
+                                    uint8_t *secret)
+{
     MP_t q1 = NULL, pubkeyBn = NULL;
     size_t len;
     int res;

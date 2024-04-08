@@ -9,11 +9,11 @@
 #import <OpenGL/gl.h>
 #endif
 
-#import <QuartzCore/QuartzCore.h>
 #import <CoreMedia/CoreMedia.h>
+#import <QuartzCore/QuartzCore.h>
 
-
-typedef struct GPUTextureOptions {
+typedef struct GPUTextureOptions
+{
     GLenum minFilter;
     GLenum magFilter;
     GLenum wrapS;
@@ -25,10 +25,10 @@ typedef struct GPUTextureOptions {
 
 @interface GPUImageFramebuffer : NSObject
 
-@property(readonly) CGSize size;
-@property(readonly) GPUTextureOptions textureOptions;
-@property(readonly) GLuint texture;
-@property(readonly) BOOL missingFramebuffer;
+@property (readonly) CGSize size;
+@property (readonly) GPUTextureOptions textureOptions;
+@property (readonly) GLuint texture;
+@property (readonly) BOOL missingFramebuffer;
 
 // Initialization and teardown
 - (id)initWithSize:(CGSize)framebufferSize;

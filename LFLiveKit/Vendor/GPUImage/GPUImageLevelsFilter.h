@@ -11,14 +11,13 @@
  * If you want to apply levels to RGB as well as individual channels you need to use
  * this filter twice - first for the individual channels and then for all channels.
  */
-@interface GPUImageLevelsFilter : GPUImageFilter
-{
+@interface GPUImageLevelsFilter : GPUImageFilter {
     GLint minUniform;
     GLint midUniform;
     GLint maxUniform;
     GLint minOutputUniform;
     GLint maxOutputUniform;
-    
+
     GPUVector3 minVector, midVector, maxVector, minOutputVector, maxOutputVector;
 }
 
@@ -42,4 +41,3 @@
 - (void)setMin:(CGFloat)min gamma:(CGFloat)mid max:(CGFloat)max;
 
 @end
-

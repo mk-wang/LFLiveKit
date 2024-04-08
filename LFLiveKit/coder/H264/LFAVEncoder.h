@@ -6,17 +6,15 @@
 //  Copyright (c) 2013 GDCL http://www.gdcl.co.uk/license.htm
 //
 
-#import <Foundation/Foundation.h>
 #import <AVFoundation/AVAssetWriter.h>
 #import <AVFoundation/AVAssetWriterInput.h>
 #import <AVFoundation/AVMediaFormat.h>
 #import <AVFoundation/AVVideoSettings.h>
+#import <Foundation/Foundation.h>
 #import <sys/stat.h>
 
-#import "LFVideoEncoder.h"
 #import "LFMP4Atom.h"
-
-
+#import "LFVideoEncoder.h"
 
 typedef int (^encoder_handler_t)(NSArray *data, CMTimeValue ptsValue);
 typedef int (^param_handler_t)(NSData *params);
@@ -31,7 +29,6 @@ typedef int (^param_handler_t)(NSData *params);
 - (void)encodeFrame:(CMSampleBufferRef)sampleBuffer;
 - (NSData *)getConfigData;
 - (void)shutdown;
-
 
 @property (readonly, atomic) int bitspersecond;
 

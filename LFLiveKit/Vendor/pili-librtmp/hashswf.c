@@ -81,7 +81,8 @@ extern TLS_CTX RTMP_TLS_ctx;
 #define AGENT "Mozilla/5.0"
 
 HTTPResult
-    HTTP_get(struct HTTP_ctx *http, const char *url, HTTP_read_callback *cb) {
+HTTP_get(struct HTTP_ctx *http, const char *url, HTTP_read_callback *cb)
+{
     char *host, *path;
     char *p1, *p2;
     char hbuf[256];
@@ -288,7 +289,8 @@ leave:
 
 #define CHUNK 16384
 
-struct info {
+struct info
+{
     z_stream *zs;
     HMAC_CTX ctx;
     int first;
@@ -297,7 +299,8 @@ struct info {
 };
 
 static size_t
-    swfcrunch(void *ptr, size_t size, size_t nmemb, void *stream) {
+swfcrunch(void *ptr, size_t size, size_t nmemb, void *stream)
+{
     struct info *i = stream;
     char *p = ptr;
     size_t len = size * nmemb;
@@ -348,7 +351,8 @@ static const char *days[] =
 
 /* Parse an HTTP datestamp into Unix time */
 static time_t
-    make_unix_time(char *s) {
+make_unix_time(char *s)
+{
     struct tm time;
     int i, ysub = 1900, fmt = 0;
     char *month;
@@ -399,8 +403,8 @@ static time_t
     time.tm_isdst = 0; /* daylight saving is never in effect in GMT */
 
     /* this is normally the value of extern int timezone, but some
-   * braindead C libraries don't provide it.
-   */
+     * braindead C libraries don't provide it.
+     */
     if (!tzchecked) {
         struct tm *tc;
         time_t then = JAN02_1980;
@@ -410,8 +414,8 @@ static time_t
     }
     res = mktime(&time);
     /* Unfortunately, mktime() assumes the input is in local time,
-   * not GMT, so we have to correct it here.
-   */
+     * not GMT, so we have to correct it here.
+     */
     if (res != -1)
         res += tzoff;
     return res;
@@ -420,7 +424,8 @@ static time_t
 /* Convert a Unix time to a network time string
  * Weekday, DD-MMM-YYYY HH:MM:SS GMT
  */
-void strtime(time_t *t, char *s) {
+void strtime(time_t *t, char *s)
+{
     struct tm *tm;
 
     tm = gmtime((time_t *)t);
@@ -429,10 +434,11 @@ void strtime(time_t *t, char *s) {
             tm->tm_year + 1900, tm->tm_hour, tm->tm_min, tm->tm_sec);
 }
 
-#define HEX2BIN(a) (((a)&0x40) ? ((a)&0xf) + 9 : ((a)&0xf))
+#define HEX2BIN(a) (((a) & 0x40) ? ((a) & 0xf) + 9 : ((a) & 0xf))
 
 int RTMP_HashSWF(const char *url, unsigned int *size, unsigned char *hash,
-                 int age) {
+                 int age)
+{
     FILE *f = NULL;
     char *path, date[64], cctim[64];
     long pos = 0;
@@ -469,15 +475,15 @@ int RTMP_HashSWF(const char *url, unsigned int *size, unsigned char *hash,
     home.av_len = strlen(home.av_val);
 
     /* SWF hash info is cached in a fixed-format file.
-   * url: <url of SWF file>
-   * ctim: HTTP datestamp of when we last checked it.
-   * date: HTTP datestamp of the SWF's last modification.
-   * size: SWF size in hex
-   * hash: SWF hash in hex
-   *
-   * These fields must be present in this order. All fields
-   * besides URL are fixed size.
-   */
+     * url: <url of SWF file>
+     * ctim: HTTP datestamp of when we last checked it.
+     * date: HTTP datestamp of the SWF's last modification.
+     * size: SWF size in hex
+     * hash: SWF hash in hex
+     *
+     * These fields must be present in this order. All fields
+     * besides URL are fixed size.
+     */
     path = malloc(hpre.av_len + home.av_len + sizeof(DIRSEP ".swfinfo"));
     sprintf(path, "%s%s" DIRSEP ".swfinfo", hpre.av_val, home.av_val);
 
@@ -546,7 +552,7 @@ int RTMP_HashSWF(const char *url, unsigned int *size, unsigned char *hash,
     if (age && ctim > 0) {
         ctim = cnow - ctim;
         ctim /= 3600 * 24; /* seconds to days */
-        if (ctim < age) /* ok, it's new enough */
+        if (ctim < age)    /* ok, it's new enough */
             goto out;
     }
 
@@ -620,7 +626,8 @@ out:
 }
 #else
 int RTMP_HashSWF(const char *url, unsigned int *size, unsigned char *hash,
-                 int age) {
+                 int age)
+{
     return -1;
 }
 #endif

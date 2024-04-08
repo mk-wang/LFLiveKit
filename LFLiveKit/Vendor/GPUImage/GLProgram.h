@@ -13,25 +13,24 @@
 #import <OpenGL/gl.h>
 #endif
 
-@interface GLProgram : NSObject 
-{
-    NSMutableArray  *attributes;
-    NSMutableArray  *uniforms;
-    GLuint          program,
-	vertShader, 
-	fragShader;	
+@interface GLProgram : NSObject {
+    NSMutableArray *attributes;
+    NSMutableArray *uniforms;
+    GLuint program,
+        vertShader,
+        fragShader;
 }
 
-@property(readwrite, nonatomic) BOOL initialized;
-@property(readwrite, copy, nonatomic) NSString *vertexShaderLog;
-@property(readwrite, copy, nonatomic) NSString *fragmentShaderLog;
-@property(readwrite, copy, nonatomic) NSString *programLog;
+@property (readwrite, nonatomic) BOOL initialized;
+@property (readwrite, copy, nonatomic) NSString *vertexShaderLog;
+@property (readwrite, copy, nonatomic) NSString *fragmentShaderLog;
+@property (readwrite, copy, nonatomic) NSString *programLog;
 
-- (id)initWithVertexShaderString:(NSString *)vShaderString 
+- (id)initWithVertexShaderString:(NSString *)vShaderString
             fragmentShaderString:(NSString *)fShaderString;
-- (id)initWithVertexShaderString:(NSString *)vShaderString 
+- (id)initWithVertexShaderString:(NSString *)vShaderString
           fragmentShaderFilename:(NSString *)fShaderFilename;
-- (id)initWithVertexShaderFilename:(NSString *)vShaderFilename 
+- (id)initWithVertexShaderFilename:(NSString *)vShaderFilename
             fragmentShaderFilename:(NSString *)fShaderFilename;
 - (void)addAttribute:(NSString *)attributeName;
 - (GLuint)attributeIndex:(NSString *)attributeName;

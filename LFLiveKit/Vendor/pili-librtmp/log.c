@@ -44,7 +44,8 @@ static const char *levels[] = {
     "CRIT", "ERROR", "WARNING", "INFO",
     "DEBUG", "DEBUG2"};
 
-static void rtmp_log_default(int level, const char *format, va_list vl) {
+static void rtmp_log_default(int level, const char *format, va_list vl)
+{
     char str[MAX_PRINT_LEN] = "";
 
     vsnprintf(str, MAX_PRINT_LEN - 1, format, vl);
@@ -53,7 +54,8 @@ static void rtmp_log_default(int level, const char *format, va_list vl) {
     if (RTMP_debuglevel < RTMP_LOGALL && strstr(str, "no-name") != NULL)
         return;
 
-    if (!fmsg) fmsg = stderr;
+    if (!fmsg)
+        fmsg = stderr;
 
     if (level <= RTMP_debuglevel) {
         if (neednl) {
@@ -67,23 +69,28 @@ static void rtmp_log_default(int level, const char *format, va_list vl) {
     }
 }
 
-void RTMP_LogSetOutput(FILE *file) {
+void RTMP_LogSetOutput(FILE *file)
+{
     fmsg = file;
 }
 
-void RTMP_LogSetLevel(RTMP_LogLevel level) {
+void RTMP_LogSetLevel(RTMP_LogLevel level)
+{
     RTMP_debuglevel = level;
 }
 
-void RTMP_LogSetCallback(RTMP_LogCallback *cbp) {
+void RTMP_LogSetCallback(RTMP_LogCallback *cbp)
+{
     cb = cbp;
 }
 
-RTMP_LogLevel RTMP_LogGetLevel() {
+RTMP_LogLevel RTMP_LogGetLevel()
+{
     return RTMP_debuglevel;
 }
 
-void RTMP_Log(int level, const char *format, ...) {
+void RTMP_Log(int level, const char *format, ...)
+{
     va_list args;
     va_start(args, format);
     cb(level, format, args);
@@ -92,7 +99,8 @@ void RTMP_Log(int level, const char *format, ...) {
 
 static const char hexdig[] = "0123456789abcdef";
 
-void RTMP_LogHex(int level, const uint8_t *data, unsigned long len) {
+void RTMP_LogHex(int level, const uint8_t *data, unsigned long len)
+{
     unsigned long i;
     char line[50], *ptr;
 
@@ -118,7 +126,8 @@ void RTMP_LogHex(int level, const uint8_t *data, unsigned long len) {
     }
 }
 
-void RTMP_LogHexString(int level, const uint8_t *data, unsigned long len) {
+void RTMP_LogHexString(int level, const uint8_t *data, unsigned long len)
+{
 #define BP_OFFSET 9
 #define BP_GRAPH 60
 #define BP_LEN 80
@@ -136,7 +145,8 @@ void RTMP_LogHexString(int level, const uint8_t *data, unsigned long len) {
         unsigned off;
 
         if (!n) {
-            if (i) RTMP_Log(level, "%s", line);
+            if (i)
+                RTMP_Log(level, "%s", line);
             memset(line, ' ', sizeof(line) - 2);
             line[sizeof(line) - 2] = '\0';
 
@@ -166,7 +176,8 @@ void RTMP_LogHexString(int level, const uint8_t *data, unsigned long len) {
 }
 
 /* These should only be used by apps, never by the library itself */
-void RTMP_LogPrintf(const char *format, ...) {
+void RTMP_LogPrintf(const char *format, ...)
+{
     char str[MAX_PRINT_LEN] = "";
     int len;
     va_list args;
@@ -177,7 +188,8 @@ void RTMP_LogPrintf(const char *format, ...) {
     if (RTMP_debuglevel == RTMP_LOGCRIT)
         return;
 
-    if (!fmsg) fmsg = stderr;
+    if (!fmsg)
+        fmsg = stderr;
 
     if (neednl) {
         putc('\n', fmsg);
@@ -191,7 +203,8 @@ void RTMP_LogPrintf(const char *format, ...) {
         fflush(fmsg);
 }
 
-void RTMP_LogStatus(const char *format, ...) {
+void RTMP_LogStatus(const char *format, ...)
+{
     char str[MAX_PRINT_LEN] = "";
     va_list args;
     va_start(args, format);
@@ -201,7 +214,8 @@ void RTMP_LogStatus(const char *format, ...) {
     if (RTMP_debuglevel == RTMP_LOGCRIT)
         return;
 
-    if (!fmsg) fmsg = stderr;
+    if (!fmsg)
+        fmsg = stderr;
 
     fprintf(fmsg, "%s", str);
     fflush(fmsg);

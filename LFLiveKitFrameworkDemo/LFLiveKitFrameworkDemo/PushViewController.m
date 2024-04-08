@@ -11,15 +11,15 @@
 
 @interface PushViewController ()
 
-@property(nonatomic,strong) LFLivePreview *liveView;
+@property (nonatomic, strong) LFLivePreview *liveView;
 
 @end
 
 @implementation PushViewController {
 }
 
-
-- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
         [self commonInit];
     }
@@ -35,17 +35,17 @@
     return self;
 }
 
-- (void)commonInit {
-    
+- (void)commonInit
+{
 }
-
 
 - (void)dealloc
 {
     [_liveView stopLive];
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     _liveView = [[LFLivePreview alloc] initWithFrame:self.view.bounds];
@@ -53,14 +53,14 @@
     _liveView.pushURL = self.server;
 }
 
-
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
     return UIInterfaceOrientationMaskPortrait;
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
+{
     return YES;
 }
-
 
 @end

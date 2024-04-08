@@ -11,11 +11,10 @@
 @class LFLivePreview;
 @interface PushViewController : UIViewController
 
-@property (nonatomic,strong) NSString *server;
+@property (nonatomic, strong) NSString *server;
 
 - (void)commonInit;
 
 - (LFLivePreview *)liveView;
 
 @end
-

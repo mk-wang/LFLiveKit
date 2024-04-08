@@ -6,9 +6,9 @@
 //  Copyright © 2016年 LaiFeng All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import "LFVideoFrame.h"
 #import "LFLiveVideoConfiguration.h"
+#import "LFVideoFrame.h"
+#import <Foundation/Foundation.h>
 
 @protocol LFVideoEncoding;
 /// 编码器编码后回调
@@ -27,4 +27,3 @@
 - (void)setDelegate:(nullable id<LFVideoEncodingDelegate>)delegate;
 - (void)stopEncoder;
 @end
-

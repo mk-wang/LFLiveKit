@@ -120,7 +120,8 @@ static const uint8_t GenuineFPKey[] = {
 
 static void InitRC4Encryption(uint8_t *secretKey, uint8_t *pubKeyIn,
                               uint8_t *pubKeyOut, RC4_handle *rc4keyIn,
-                              RC4_handle *rc4keyOut) {
+                              RC4_handle *rc4keyOut)
+{
     uint8_t digest[SHA256_DIGEST_LENGTH];
     unsigned int digestLen = 0;
     HMAC_CTX ctx;
@@ -149,7 +150,8 @@ static void InitRC4Encryption(uint8_t *secretKey, uint8_t *pubKeyIn,
 
 typedef unsigned int(getoff)(uint8_t *buf, unsigned int len);
 
-static unsigned int GetDHOffset2(uint8_t *handshake, unsigned int len) {
+static unsigned int GetDHOffset2(uint8_t *handshake, unsigned int len)
+{
     unsigned int offset = 0;
     uint8_t *ptr = handshake + 768;
     unsigned int res;
@@ -175,7 +177,8 @@ static unsigned int GetDHOffset2(uint8_t *handshake, unsigned int len) {
     return res;
 }
 
-static unsigned int GetDigestOffset2(uint8_t *handshake, unsigned int len) {
+static unsigned int GetDigestOffset2(uint8_t *handshake, unsigned int len)
+{
     unsigned int offset = 0;
     uint8_t *ptr = handshake + 772;
     unsigned int res;
@@ -199,7 +202,8 @@ static unsigned int GetDigestOffset2(uint8_t *handshake, unsigned int len) {
     return res;
 }
 
-static unsigned int GetDHOffset1(uint8_t *handshake, unsigned int len) {
+static unsigned int GetDHOffset1(uint8_t *handshake, unsigned int len)
+{
     unsigned int offset = 0;
     uint8_t *ptr = handshake + 1532;
     unsigned int res;
@@ -226,7 +230,8 @@ static unsigned int GetDHOffset1(uint8_t *handshake, unsigned int len) {
     return res;
 }
 
-static unsigned int GetDigestOffset1(uint8_t *handshake, unsigned int len) {
+static unsigned int GetDigestOffset1(uint8_t *handshake, unsigned int len)
+{
     unsigned int offset = 0;
     uint8_t *ptr = handshake + 8;
     unsigned int res;
@@ -257,7 +262,8 @@ static getoff *digoff[] = {GetDigestOffset1, GetDigestOffset2};
 static getoff *dhoff[] = {GetDHOffset1, GetDHOffset2};
 
 static void HMACsha256(const uint8_t *message, size_t messageLen,
-                       const uint8_t *key, size_t keylen, uint8_t *digest) {
+                       const uint8_t *key, size_t keylen, uint8_t *digest)
+{
     unsigned int digestLen;
     HMAC_CTX ctx;
 
@@ -270,7 +276,8 @@ static void HMACsha256(const uint8_t *message, size_t messageLen,
 
 static void CalculateDigest(unsigned int digestPos, uint8_t *handshakeMessage,
                             const uint8_t *key, size_t keyLen,
-                            uint8_t *digest) {
+                            uint8_t *digest)
+{
     const int messageLen = RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH;
     uint8_t message[RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH];
 
@@ -283,7 +290,8 @@ static void CalculateDigest(unsigned int digestPos, uint8_t *handshakeMessage,
 }
 
 static int VerifyDigest(unsigned int digestPos, uint8_t *handshakeMessage,
-                        const uint8_t *key, size_t keyLen) {
+                        const uint8_t *key, size_t keyLen)
+{
     uint8_t calcDigest[SHA256_DIGEST_LENGTH];
 
     CalculateDigest(digestPos, handshakeMessage, key, keyLen, calcDigest);
@@ -325,7 +333,8 @@ static const uint32_t rtmpe8_keys[16][4] = {
 /* RTMPE type 8 uses XTEA on the regular signature
  * http://en.wikipedia.org/wiki/XTEA
  */
-static void rtmpe8_sig(uint8_t *in, uint8_t *out, int keyid) {
+static void rtmpe8_sig(uint8_t *in, uint8_t *out, int keyid)
+{
     unsigned int i, num_rounds = 32;
     uint32_t v0, v1, sum = 0, delta = 0x9E3779B9;
     uint32_t const *k;
@@ -357,7 +366,8 @@ static void rtmpe8_sig(uint8_t *in, uint8_t *out, int keyid) {
     out[7] = v1;
 }
 
-static int HandShake(RTMP *r, int FP9HandShake) {
+static int HandShake(RTMP *r, int FP9HandShake)
+{
     int i, offalg = 0;
     int dhposClient = 0;
     int digestPosClient = 0;
@@ -502,7 +512,7 @@ static int HandShake(RTMP *r, int FP9HandShake) {
         uint8_t *signatureResp = NULL;
 
         /* we have to use this signature now to find the correct algorithms for
-     * getting the digest and DH positions */
+         * getting the digest and DH positions */
         int digestPosServer = getdig(serversig, RTMP_SIG_SIZE);
 
         if (!VerifyDigest(digestPosServer, serversig, GenuineFMSKey, 36)) {
@@ -522,7 +532,7 @@ static int HandShake(RTMP *r, int FP9HandShake) {
         }
 
         /* generate SWFVerification token (SHA256 HMAC hash of decompressed SWF, key
-     * are the last 32 bytes of the server handshake) */
+         * are the last 32 bytes of the server handshake) */
         if (r->Link.SWFSize) {
             const char swfVerify[] = {0x01, 0x01};
             char *vend = r->Link.SWFVerificationResponse +
@@ -709,7 +719,8 @@ static int HandShake(RTMP *r, int FP9HandShake) {
     return TRUE;
 }
 
-static int SHandShake(RTMP *r) {
+static int SHandShake(RTMP *r)
+{
     int i, offalg = 0;
     int dhposServer = 0;
     int digestPosServer = 0;
@@ -842,7 +853,7 @@ static int SHandShake(RTMP *r) {
         uint8_t *signatureResp = NULL;
 
         /* we have to use this signature now to find the correct algorithms for
-     * getting the digest and DH positions */
+         * getting the digest and DH positions */
         int digestPosClient = getdig(clientsig, RTMP_SIG_SIZE);
 
         if (!VerifyDigest(digestPosClient, clientsig, GenuineFPKey, 30)) {
@@ -863,7 +874,7 @@ static int SHandShake(RTMP *r) {
         }
 
         /* generate SWFVerification token (SHA256 HMAC hash of decompressed SWF, key
-     * are the last 32 bytes of the server handshake) */
+         * are the last 32 bytes of the server handshake) */
         if (r->Link.SWFSize) {
             const char swfVerify[] = {0x01, 0x01};
             char *vend = r->Link.SWFVerificationResponse +

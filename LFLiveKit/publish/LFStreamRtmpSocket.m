@@ -14,16 +14,15 @@
 #import "rtmp.h"
 #endif
 
-static const NSInteger RetryTimesBreaken = 5;  ///<  重连1分钟  3秒一次 一共20次
+static const NSInteger RetryTimesBreaken = 5; ///  重连1分钟  3秒一次 一共20次
 static const NSInteger RetryTimesMargin = 3;
 
-
-#define RTMP_RECEIVE_TIMEOUT    2
+#define RTMP_RECEIVE_TIMEOUT 2
 #define DATA_ITEMS_MAX_COUNT 100
 #define RTMP_DATA_RESERVE_SIZE 400
 #define RTMP_HEAD_SIZE (sizeof(RTMPPacket) + RTMP_MAX_HEADER_SIZE)
 
-#define SAVC(x)    static const AVal av_ ## x = AVC(#x)
+#define SAVC(x) static const AVal av_##x = AVC(#x)
 
 static const AVal av_setDataFrame = AVC("@setDataFrame");
 static const AVal av_SDKVersion = AVC("LFLiveKit 2.4.0");
@@ -38,16 +37,15 @@ SAVC(audiocodecid);
 SAVC(audiodatarate);
 SAVC(audiosamplerate);
 SAVC(audiosamplesize);
-//SAVC(audiochannels);
+// SAVC(audiochannels);
 SAVC(stereo);
 SAVC(encoder);
-//SAVC(av_stereo);
+// SAVC(av_stereo);
 SAVC(fileSize);
 SAVC(avc1);
 SAVC(mp4a);
 
-@interface LFStreamRTMPSocket ()<LFStreamingBufferDelegate>
-{
+@interface LFStreamRTMPSocket () <LFStreamingBufferDelegate> {
     PILI_RTMP *_rtmp;
 }
 @property (nonatomic, weak) id<LFStreamSocketDelegate> delegate;
@@ -55,7 +53,7 @@ SAVC(mp4a);
 @property (nonatomic, strong) LFStreamingBuffer *buffer;
 @property (nonatomic, strong) LFLiveDebug *debugInfo;
 @property (nonatomic, strong) dispatch_queue_t rtmpSendQueue;
-//错误信息
+// 错误信息
 @property (nonatomic, assign) RTMPError error;
 @property (nonatomic, assign) NSInteger retryTimes4netWorkBreaken;
 @property (nonatomic, assign) NSInteger reconnectInterval;
@@ -73,50 +71,64 @@ SAVC(mp4a);
 
 @implementation LFStreamRTMPSocket
 
-#pragma mark -- LFStreamSocket
-- (nullable instancetype)initWithStream:(nullable LFLiveStreamInfo *)stream{
+#pragma mark-- LFStreamSocket
+- (nullable instancetype)initWithStream:(nullable LFLiveStreamInfo *)stream
+{
     return [self initWithStream:stream reconnectInterval:0 reconnectCount:0];
 }
 
-- (nullable instancetype)initWithStream:(nullable LFLiveStreamInfo *)stream reconnectInterval:(NSInteger)reconnectInterval reconnectCount:(NSInteger)reconnectCount{
-    if (!stream) @throw [NSException exceptionWithName:@"LFStreamRtmpSocket init error" reason:@"stream is nil" userInfo:nil];
+- (nullable instancetype)initWithStream:(nullable LFLiveStreamInfo *)stream reconnectInterval:(NSInteger)reconnectInterval reconnectCount:(NSInteger)reconnectCount
+{
+    if (!stream)
+        @throw [NSException exceptionWithName:@"LFStreamRtmpSocket init error" reason:@"stream is nil" userInfo:nil];
     if (self = [super init]) {
         _stream = stream;
-        if (reconnectInterval > 0) _reconnectInterval = reconnectInterval;
-        else _reconnectInterval = RetryTimesMargin;
-        
-        if (reconnectCount > 0) _reconnectCount = reconnectCount;
-        else _reconnectCount = RetryTimesBreaken;
-        
-        [self addObserver:self forKeyPath:@"isSending" options:NSKeyValueObservingOptionNew context:nil];//这里改成observer主要考虑一直到发送出错情况下，可以继续发送
+        if (reconnectInterval > 0)
+            _reconnectInterval = reconnectInterval;
+        else
+            _reconnectInterval = RetryTimesMargin;
+
+        if (reconnectCount > 0)
+            _reconnectCount = reconnectCount;
+        else
+            _reconnectCount = RetryTimesBreaken;
+
+        [self addObserver:self forKeyPath:@"isSending" options:NSKeyValueObservingOptionNew context:nil]; // 这里改成observer主要考虑一直到发送出错情况下，可以继续发送
     }
     return self;
 }
 
-- (void)dealloc{
+- (void)dealloc
+{
     [self removeObserver:self forKeyPath:@"isSending"];
 }
 
-- (void)start {
+- (void)start
+{
     dispatch_async(self.rtmpSendQueue, ^{
         [self _start];
     });
 }
 
-- (void)_start {
-    if (!_stream) return;
-    if (_isConnecting) return;
-    if (_rtmp != NULL) return;
+- (void)_start
+{
+    if (!_stream)
+        return;
+    if (_isConnecting)
+        return;
+    if (_rtmp != NULL)
+        return;
     self.debugInfo.streamId = self.stream.streamId;
     self.debugInfo.uploadUrl = self.stream.url;
     self.debugInfo.isRtmp = YES;
-    if (_isConnecting) return;
-    
+    if (_isConnecting)
+        return;
+
     _isConnecting = YES;
     if (self.delegate && [self.delegate respondsToSelector:@selector(socketStatus:status:)]) {
         [self.delegate socketStatus:self status:LFLivePending];
     }
-    
+
     if (_rtmp != NULL) {
         PILI_RTMP_Close(_rtmp, &_error);
         PILI_RTMP_Free(_rtmp);
@@ -124,14 +136,16 @@ SAVC(mp4a);
     [self RTMP264_Connect:(char *)[_stream.url cStringUsingEncoding:NSASCIIStringEncoding]];
 }
 
-- (void)stop {
+- (void)stop
+{
     dispatch_async(self.rtmpSendQueue, ^{
         [self _stop];
         [NSObject cancelPreviousPerformRequestsWithTarget:self];
     });
 }
 
-- (void)_stop {
+- (void)_stop
+{
     if (self.delegate && [self.delegate respondsToSelector:@selector(socketStatus:status:)]) {
         [self.delegate socketStatus:self status:LFLiveStop];
     }
@@ -143,27 +157,31 @@ SAVC(mp4a);
     [self clean];
 }
 
-- (void)sendFrame:(LFFrame *)frame {
-    if (!frame) return;
+- (void)sendFrame:(LFFrame *)frame
+{
+    if (!frame)
+        return;
     [self.buffer appendObject:frame];
-    
-    if(!self.isSending){
+
+    if (!self.isSending) {
         [self sendFrame];
     }
 }
 
-- (void)setDelegate:(id<LFStreamSocketDelegate>)delegate {
+- (void)setDelegate:(id<LFStreamSocketDelegate>)delegate
+{
     _delegate = delegate;
 }
 
-#pragma mark -- CustomMethod
-- (void)sendFrame {
+#pragma mark-- CustomMethod
+- (void)sendFrame
+{
     __weak typeof(self) _self = self;
-     dispatch_async(self.rtmpSendQueue, ^{
+    dispatch_async(self.rtmpSendQueue, ^{
         if (!_self.isSending && _self.buffer.list.count > 0) {
             _self.isSending = YES;
 
-            if (!_self.isConnected || _self.isReconnecting || _self.isConnecting || !_rtmp){
+            if (!_self.isConnected || _self.isReconnecting || _self.isConnecting || !_rtmp) {
                 _self.isSending = NO;
                 return;
             }
@@ -173,7 +191,7 @@ SAVC(mp4a);
             if ([frame isKindOfClass:[LFVideoFrame class]]) {
                 if (!_self.sendVideoHead) {
                     _self.sendVideoHead = YES;
-                    if(!((LFVideoFrame*)frame).sps || !((LFVideoFrame*)frame).pps){
+                    if (!((LFVideoFrame *)frame).sps || !((LFVideoFrame *)frame).pps) {
                         _self.isSending = NO;
                         return;
                     }
@@ -184,7 +202,7 @@ SAVC(mp4a);
             } else {
                 if (!_self.sendAudioHead) {
                     _self.sendAudioHead = YES;
-                    if(!((LFAudioFrame*)frame).audioInfo){
+                    if (!((LFAudioFrame *)frame).audioInfo) {
                         _self.isSending = NO;
                         return;
                     }
@@ -194,7 +212,7 @@ SAVC(mp4a);
                 }
             }
 
-            //debug更新
+            // debug更新
             _self.debugInfo.totalFrame++;
             _self.debugInfo.dropFrame += _self.buffer.lastDropFrames;
             _self.buffer.lastDropFrames = 0;
@@ -222,18 +240,18 @@ SAVC(mp4a);
                 _self.debugInfo.capturedVideoCount = 0;
                 _self.debugInfo.timeStamp = CACurrentMediaTime() * 1000;
             }
-            
-            //修改发送状态
+
+            // 修改发送状态
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                //< 这里只为了不循环调用sendFrame方法 调用栈是保证先出栈再进栈
+                // 这里只为了不循环调用sendFrame方法 调用栈是保证先出栈再进栈
                 _self.isSending = NO;
             });
-            
         }
     });
 }
 
-- (void)clean {
+- (void)clean
+{
     _isConnecting = NO;
     _isReconnecting = NO;
     _isSending = NO;
@@ -245,15 +263,16 @@ SAVC(mp4a);
     self.retryTimes4netWorkBreaken = 0;
 }
 
-- (NSInteger)RTMP264_Connect:(char *)push_url {
-    //由于摄像头的timestamp是一直在累加，需要每次得到相对时间戳
-    //分配与初始化
+- (NSInteger)RTMP264_Connect:(char *)push_url
+{
+    // 由于摄像头的timestamp是一直在累加，需要每次得到相对时间戳
+    // 分配与初始化
     _rtmp = PILI_RTMP_Alloc();
     PILI_RTMP_Init(_rtmp);
 
-    //设置URL
+    // 设置URL
     if (PILI_RTMP_SetupURL(_rtmp, push_url, &_error) == FALSE) {
-        //log(LOG_ERR, "RTMP_SetupURL() failed!");
+        // log(LOG_ERR, "RTMP_SetupURL() failed!");
         goto Failed;
     }
 
@@ -262,16 +281,16 @@ SAVC(mp4a);
     _rtmp->m_userData = (__bridge void *)self;
     _rtmp->m_msgCounter = 1;
     _rtmp->Link.timeout = RTMP_RECEIVE_TIMEOUT;
-    
-    //设置可写，即发布流，这个函数必须在连接前使用，否则无效
+
+    // 设置可写，即发布流，这个函数必须在连接前使用，否则无效
     PILI_RTMP_EnableWrite(_rtmp);
 
-    //连接服务器
+    // 连接服务器
     if (PILI_RTMP_Connect(_rtmp, NULL, &_error) == FALSE) {
         goto Failed;
     }
 
-    //连接流
+    // 连接流
     if (PILI_RTMP_ConnectStream(_rtmp, 0, &_error) == FALSE) {
         goto Failed;
     }
@@ -296,14 +315,15 @@ Failed:
     return -1;
 }
 
-#pragma mark -- Rtmp Send
+#pragma mark-- Rtmp Send
 
-- (void)sendMetaData {
+- (void)sendMetaData
+{
     PILI_RTMPPacket packet;
 
     char pbuf[2048], *pend = pbuf + sizeof(pbuf);
 
-    packet.m_nChannel = 0x03;                   // control channel (invoke)
+    packet.m_nChannel = 0x03; // control channel (invoke)
     packet.m_headerType = RTMP_PACKET_SIZE_LARGE;
     packet.m_packetType = RTMP_PACKET_TYPE_INFO;
     packet.m_nTimeStamp = 0;
@@ -351,7 +371,8 @@ Failed:
     }
 }
 
-- (void)sendVideoHeader:(LFVideoFrame *)videoFrame {
+- (void)sendVideoHeader:(LFVideoFrame *)videoFrame
+{
 
     unsigned char *body = NULL;
     NSInteger iIndex = 0;
@@ -395,7 +416,8 @@ Failed:
     free(body);
 }
 
-- (void)sendVideo:(LFVideoFrame *)frame {
+- (void)sendVideo:(LFVideoFrame *)frame
+{
 
     NSInteger i = 0;
     NSInteger rtmpLength = frame.data.length + 9;
@@ -403,25 +425,26 @@ Failed:
     memset(body, 0, rtmpLength);
 
     if (frame.isKeyFrame) {
-        body[i++] = 0x17;        // 1:Iframe  7:AVC
+        body[i++] = 0x17; // 1:Iframe  7:AVC
     } else {
-        body[i++] = 0x27;        // 2:Pframe  7:AVC
+        body[i++] = 0x27; // 2:Pframe  7:AVC
     }
-    body[i++] = 0x01;    // AVC NALU
+    body[i++] = 0x01; // AVC NALU
     body[i++] = 0x00;
     body[i++] = 0x00;
     body[i++] = 0x00;
     body[i++] = (frame.data.length >> 24) & 0xff;
     body[i++] = (frame.data.length >> 16) & 0xff;
-    body[i++] = (frame.data.length >>  8) & 0xff;
+    body[i++] = (frame.data.length >> 8) & 0xff;
     body[i++] = (frame.data.length) & 0xff;
     memcpy(&body[i], frame.data.bytes, frame.data.length);
 
-    [self sendPacket:RTMP_PACKET_TYPE_VIDEO data:body size:(rtmpLength) nTimestamp:frame.timestamp];
+    [self sendPacket:RTMP_PACKET_TYPE_VIDEO data:body size:(rtmpLength)nTimestamp:frame.timestamp];
     free(body);
 }
 
-- (NSInteger)sendPacket:(unsigned int)nPacketType data:(unsigned char *)data size:(NSInteger)size nTimestamp:(uint64_t)nTimestamp {
+- (NSInteger)sendPacket:(unsigned int)nPacketType data:(unsigned char *)data size:(NSInteger)size nTimestamp:(uint64_t)nTimestamp
+{
     NSInteger rtmpLength = size;
     PILI_RTMPPacket rtmp_pack;
     PILI_RTMPPacket_Reset(&rtmp_pack);
@@ -431,7 +454,8 @@ Failed:
     memcpy(rtmp_pack.m_body, data, size);
     rtmp_pack.m_hasAbsTimestamp = 0;
     rtmp_pack.m_packetType = nPacketType;
-    if (_rtmp) rtmp_pack.m_nInfoField2 = _rtmp->m_stream_id;
+    if (_rtmp)
+        rtmp_pack.m_nInfoField2 = _rtmp->m_stream_id;
     rtmp_pack.m_nChannel = 0x04;
     rtmp_pack.m_headerType = RTMP_PACKET_SIZE_LARGE;
     if (RTMP_PACKET_TYPE_AUDIO == nPacketType && size != 4) {
@@ -445,7 +469,8 @@ Failed:
     return nRet;
 }
 
-- (NSInteger)RtmpPacketSend:(PILI_RTMPPacket *)packet {
+- (NSInteger)RtmpPacketSend:(PILI_RTMPPacket *)packet
+{
     if (_rtmp && PILI_RTMP_IsConnected(_rtmp)) {
         int success = PILI_RTMP_SendPacket(_rtmp, packet, 0, &_error);
         return success;
@@ -453,23 +478,25 @@ Failed:
     return -1;
 }
 
-- (void)sendAudioHeader:(LFAudioFrame *)audioFrame {
+- (void)sendAudioHeader:(LFAudioFrame *)audioFrame
+{
 
-    NSInteger rtmpLength = audioFrame.audioInfo.length + 2;     /*spec data长度,一般是2*/
+    NSInteger rtmpLength = audioFrame.audioInfo.length + 2; /*spec data长度,一般是2*/
     unsigned char *body = (unsigned char *)malloc(rtmpLength);
     memset(body, 0, rtmpLength);
 
     /*AF 00 + AAC RAW data*/
     body[0] = 0xAF;
     body[1] = 0x00;
-    memcpy(&body[2], audioFrame.audioInfo.bytes, audioFrame.audioInfo.length);          /*spec_buf是AAC sequence header数据*/
+    memcpy(&body[2], audioFrame.audioInfo.bytes, audioFrame.audioInfo.length); /*spec_buf是AAC sequence header数据*/
     [self sendPacket:RTMP_PACKET_TYPE_AUDIO data:body size:rtmpLength nTimestamp:0];
     free(body);
 }
 
-- (void)sendAudio:(LFFrame *)frame {
+- (void)sendAudio:(LFFrame *)frame
+{
 
-    NSInteger rtmpLength = frame.data.length + 2;    /*spec data长度,一般是2*/
+    NSInteger rtmpLength = frame.data.length + 2; /*spec data长度,一般是2*/
     unsigned char *body = (unsigned char *)malloc(rtmpLength);
     memset(body, 0, rtmpLength);
 
@@ -482,16 +509,17 @@ Failed:
 }
 
 // 断线重连
-- (void)reconnect {
+- (void)reconnect
+{
     dispatch_async(self.rtmpSendQueue, ^{
         if (self.retryTimes4netWorkBreaken++ < self.reconnectCount && !self.isReconnecting) {
             self.isConnected = NO;
             self.isConnecting = NO;
             self.isReconnecting = YES;
             dispatch_async(dispatch_get_main_queue(), ^{
-                 [self performSelector:@selector(_reconnect) withObject:nil afterDelay:self.reconnectInterval];
+                [self performSelector:@selector(_reconnect) withObject:nil afterDelay:self.reconnectInterval];
             });
-           
+
         } else if (self.retryTimes4netWorkBreaken >= self.reconnectCount) {
             if (self.delegate && [self.delegate respondsToSelector:@selector(socketStatus:status:)]) {
                 [self.delegate socketStatus:self status:LFLiveError];
@@ -503,14 +531,17 @@ Failed:
     });
 }
 
-- (void)_reconnect{
+- (void)_reconnect
+{
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    
+
     _isReconnecting = NO;
-    if(_isConnected) return;
-    
+    if (_isConnected)
+        return;
+
     _isReconnecting = NO;
-    if (_isConnected) return;
+    if (_isConnected)
+        return;
     if (_rtmp != NULL) {
         PILI_RTMP_Close(_rtmp, &_error);
         PILI_RTMP_Free(_rtmp);
@@ -518,11 +549,11 @@ Failed:
     }
     _sendAudioHead = NO;
     _sendVideoHead = NO;
-    
+
     if (self.delegate && [self.delegate respondsToSelector:@selector(socketStatus:status:)]) {
         [self.delegate socketStatus:self status:LFLiveRefresh];
     }
-    
+
     if (_rtmp != NULL) {
         PILI_RTMP_Close(_rtmp, &_error);
         PILI_RTMP_Free(_rtmp);
@@ -530,53 +561,59 @@ Failed:
     [self RTMP264_Connect:(char *)[_stream.url cStringUsingEncoding:NSASCIIStringEncoding]];
 }
 
-#pragma mark -- CallBack
-void RTMPErrorCallback(RTMPError *error, void *userData) {
+#pragma mark-- CallBack
+void RTMPErrorCallback(RTMPError *error, void *userData)
+{
     LFStreamRTMPSocket *socket = (__bridge LFStreamRTMPSocket *)userData;
     if (error->code < 0) {
         [socket reconnect];
     }
 }
 
-void ConnectionTimeCallback(PILI_CONNECTION_TIME *conn_time, void *userData) {
+void ConnectionTimeCallback(PILI_CONNECTION_TIME *conn_time, void *userData)
+{
 }
 
-#pragma mark -- LFStreamingBufferDelegate
-- (void)streamingBuffer:(nullable LFStreamingBuffer *)buffer bufferState:(LFLiveBuffferState)state{
-    if(self.delegate && [self.delegate respondsToSelector:@selector(socketBufferStatus:status:)]){
+#pragma mark-- LFStreamingBufferDelegate
+- (void)streamingBuffer:(nullable LFStreamingBuffer *)buffer bufferState:(LFLiveBuffferState)state
+{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(socketBufferStatus:status:)]) {
         [self.delegate socketBufferStatus:self status:state];
     }
 }
 
-#pragma mark -- Observer
--(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context{
-    if([keyPath isEqualToString:@"isSending"]){
-        if(!self.isSending){
+#pragma mark-- Observer
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"isSending"]) {
+        if (!self.isSending) {
             [self sendFrame];
         }
     }
 }
 
-#pragma mark -- Getter Setter
+#pragma mark-- Getter Setter
 
-- (LFStreamingBuffer *)buffer {
+- (LFStreamingBuffer *)buffer
+{
     if (!_buffer) {
         _buffer = [[LFStreamingBuffer alloc] init];
         _buffer.delegate = self;
-
     }
     return _buffer;
 }
 
-- (LFLiveDebug *)debugInfo {
+- (LFLiveDebug *)debugInfo
+{
     if (!_debugInfo) {
         _debugInfo = [[LFLiveDebug alloc] init];
     }
     return _debugInfo;
 }
 
-- (dispatch_queue_t)rtmpSendQueue{
-    if(!_rtmpSendQueue){
+- (dispatch_queue_t)rtmpSendQueue
+{
+    if (!_rtmpSendQueue) {
         _rtmpSendQueue = dispatch_queue_create("com.youku.LaiFeng.RtmpSendQueue", NULL);
     }
     return _rtmpSendQueue;

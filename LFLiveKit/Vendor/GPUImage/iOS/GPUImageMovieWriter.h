@@ -1,6 +1,6 @@
-#import <Foundation/Foundation.h>
-#import <AVFoundation/AVFoundation.h>
 #import "GPUImageContext.h"
+#import <AVFoundation/AVFoundation.h>
+#import <Foundation/Foundation.h>
 
 extern NSString *const kGPUImageColorSwizzlingFragmentShaderString;
 
@@ -8,21 +8,20 @@ extern NSString *const kGPUImageColorSwizzlingFragmentShaderString;
 
 @optional
 - (void)movieRecordingCompleted;
-- (void)movieRecordingFailedWithError:(NSError*)error;
+- (void)movieRecordingFailedWithError:(NSError *)error;
 
 @end
 
-@interface GPUImageMovieWriter : NSObject <GPUImageInput>
-{
+@interface GPUImageMovieWriter : NSObject <GPUImageInput> {
     BOOL alreadyFinishedRecording;
-    
+
     NSURL *movieURL;
     NSString *fileType;
-	AVAssetWriter *assetWriter;
-	AVAssetWriterInput *assetWriterAudioInput;
-	AVAssetWriterInput *assetWriterVideoInput;
+    AVAssetWriter *assetWriter;
+    AVAssetWriterInput *assetWriterAudioInput;
+    AVAssetWriterInput *assetWriterVideoInput;
     AVAssetWriterInputPixelBufferAdaptor *assetWriterPixelBufferInput;
-    
+
     GPUImageContext *_movieWriterContext;
     CVPixelBufferRef renderTarget;
     CVOpenGLESTextureRef renderTexture;
@@ -31,23 +30,23 @@ extern NSString *const kGPUImageColorSwizzlingFragmentShaderString;
     GPUImageRotationMode inputRotation;
 }
 
-@property(readwrite, nonatomic) BOOL hasAudioTrack;
-@property(readwrite, nonatomic) BOOL shouldPassthroughAudio;
-@property(readwrite, nonatomic) BOOL shouldInvalidateAudioSampleWhenDone;
-@property(nonatomic, copy) void(^completionBlock)(void);
-@property(nonatomic, copy) void(^failureBlock)(NSError*);
-@property(nonatomic, assign) id<GPUImageMovieWriterDelegate> delegate;
-@property(readwrite, nonatomic) BOOL encodingLiveVideo;
-@property(nonatomic, copy) BOOL(^videoInputReadyCallback)(void);
-@property(nonatomic, copy) BOOL(^audioInputReadyCallback)(void);
-@property(nonatomic, copy) void(^audioProcessingCallback)(SInt16 **samplesRef, CMItemCount numSamplesInBuffer);
-@property(nonatomic) BOOL enabled;
-@property(nonatomic, readonly) AVAssetWriter *assetWriter;
-@property(nonatomic, readonly) CMTime duration;
-@property(nonatomic, assign) CGAffineTransform transform;
-@property(nonatomic, copy) NSArray *metaData;
-@property(nonatomic, assign, getter = isPaused) BOOL paused;
-@property(nonatomic, retain) GPUImageContext *movieWriterContext;
+@property (readwrite, nonatomic) BOOL hasAudioTrack;
+@property (readwrite, nonatomic) BOOL shouldPassthroughAudio;
+@property (readwrite, nonatomic) BOOL shouldInvalidateAudioSampleWhenDone;
+@property (nonatomic, copy) void (^completionBlock)(void);
+@property (nonatomic, copy) void (^failureBlock)(NSError *);
+@property (nonatomic, assign) id<GPUImageMovieWriterDelegate> delegate;
+@property (readwrite, nonatomic) BOOL encodingLiveVideo;
+@property (nonatomic, copy) BOOL (^videoInputReadyCallback)(void);
+@property (nonatomic, copy) BOOL (^audioInputReadyCallback)(void);
+@property (nonatomic, copy) void (^audioProcessingCallback)(SInt16 **samplesRef, CMItemCount numSamplesInBuffer);
+@property (nonatomic) BOOL enabled;
+@property (nonatomic, readonly) AVAssetWriter *assetWriter;
+@property (nonatomic, readonly) CMTime duration;
+@property (nonatomic, assign) CGAffineTransform transform;
+@property (nonatomic, copy) NSArray *metaData;
+@property (nonatomic, assign, getter=isPaused) BOOL paused;
+@property (nonatomic, retain) GPUImageContext *movieWriterContext;
 
 // Initialization and teardown
 - (id)initWithMovieURL:(NSURL *)newMovieURL size:(CGSize)newSize;

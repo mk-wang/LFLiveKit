@@ -1,6 +1,6 @@
+#import "GPUImageFramebuffer.h"
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
-#import "GPUImageFramebuffer.h"
 
 @interface GPUImageFramebufferCache : NSObject
 

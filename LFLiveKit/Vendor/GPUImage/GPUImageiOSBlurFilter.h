@@ -4,8 +4,7 @@
 @class GPUImageGaussianBlurFilter;
 @class GPUImageLuminanceRangeFilter;
 
-@interface GPUImageiOSBlurFilter : GPUImageFilterGroup
-{
+@interface GPUImageiOSBlurFilter : GPUImageFilterGroup {
     GPUImageSaturationFilter *saturationFilter;
     GPUImageGaussianBlurFilter *blurFilter;
     GPUImageLuminanceRangeFilter *luminanceRangeFilter;
@@ -22,7 +21,6 @@
 /** The degree to which to downsample, then upsample the incoming image to minimize computations within the Gaussian blur, default of 4.0
  */
 @property (readwrite, nonatomic) CGFloat downsampling;
-
 
 /** The degree to reduce the luminance range, from 0.0 to 1.0. Default is 0.6.
  */

@@ -3,8 +3,8 @@ platform :ios,'12.0'
 use_frameworks! :linkage => :static
 
 target “LFLiveKitFrameworkDemo” do
-	pod 'LFLiveKit', :path => '../../.'
-	pod 'ZLMediaKit', :path => '../../ZLMediaKit'
+	pod 'LFLiveKit', :path => '../'
+	pod 'ZLMediaKit', :path => '../../TVRemote/ZLMediaKit'
 end
 
 post_install do |installer|

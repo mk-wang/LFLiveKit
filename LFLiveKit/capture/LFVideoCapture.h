@@ -6,9 +6,9 @@
 //  Copyright © 2016年 LaiFeng All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <AVFoundation/AVFoundation.h>
 #import "LFLiveVideoConfiguration.h"
+#import <AVFoundation/AVFoundation.h>
+#import <Foundation/Foundation.h>
 
 @class LFVideoCapture;
 /** LFVideoCapture callback videoData */

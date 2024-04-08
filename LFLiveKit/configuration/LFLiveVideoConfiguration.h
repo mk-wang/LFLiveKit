@@ -10,7 +10,7 @@
 #import <UIKit/UIKit.h>
 
 /// 视频分辨率(都是16：9 当此设备不支持当前分辨率，自动降低一级)
-typedef NS_ENUM (NSUInteger, LFLiveVideoSessionPreset){
+typedef NS_ENUM(NSUInteger, LFLiveVideoSessionPreset) {
     /// 低分辨率
     LFCaptureSessionPreset360x640 = 0,
     /// 中分辨率
@@ -20,7 +20,7 @@ typedef NS_ENUM (NSUInteger, LFLiveVideoSessionPreset){
 };
 
 /// 视频质量
-typedef NS_ENUM (NSUInteger, LFLiveVideoQuality){
+typedef NS_ENUM(NSUInteger, LFLiveVideoQuality) {
     /// 分辨率： 360 *640 帧数：15 码率：500Kps
     LFLiveVideoQuality_Low1 = 0,
     /// 分辨率： 360 *640 帧数：24 码率：800Kps
@@ -43,7 +43,7 @@ typedef NS_ENUM (NSUInteger, LFLiveVideoQuality){
     LFLiveVideoQuality_Default = LFLiveVideoQuality_Low2
 };
 
-@interface LFLiveVideoConfiguration : NSObject<NSCoding, NSCopying>
+@interface LFLiveVideoConfiguration : NSObject <NSCoding, NSCopying>
 
 /// 默认视频配置
 + (instancetype)defaultConfiguration;
@@ -90,13 +90,13 @@ typedef NS_ENUM (NSUInteger, LFLiveVideoQuality){
 /// 视频的最小码率，单位是 bps
 @property (nonatomic, assign) NSUInteger videoMinBitRate;
 
-///< 分辨率
+/// 分辨率
 @property (nonatomic, assign) LFLiveVideoSessionPreset sessionPreset;
 
-///< ≈sde3分辨率
+/// ≈sde3分辨率
 @property (nonatomic, assign, readonly) NSString *avSessionPreset;
 
-///< 是否是横屏
+/// 是否是横屏
 @property (nonatomic, assign, readonly) BOOL landscape;
 
 @end

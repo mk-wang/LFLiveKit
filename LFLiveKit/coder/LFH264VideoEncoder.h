@@ -9,7 +9,6 @@
 #import "LFVideoEncoding.h"
 
 @interface LFH264VideoEncoder : NSObject <LFVideoEncoding> {
- 
 }
 
 - (void)shutdown;

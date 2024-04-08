@@ -7,36 +7,33 @@
 //  Copyright © 2016年 LaiFeng All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <AVFoundation/AVFoundation.h>
-#import "LFLiveStreamInfo.h"
 #import "LFAudioFrame.h"
-#import "LFVideoFrame.h"
 #import "LFLiveAudioConfiguration.h"
-#import "LFLiveVideoConfiguration.h"
 #import "LFLiveDebug.h"
+#import "LFLiveStreamInfo.h"
+#import "LFLiveVideoConfiguration.h"
+#import "LFVideoFrame.h"
+#import <AVFoundation/AVFoundation.h>
+#import <Foundation/Foundation.h>
 
-
-
-typedef NS_ENUM(NSInteger,LFLiveCaptureType) {
-    LFLiveCaptureAudio,         //< capture only audio
-    LFLiveCaptureVideo,         //< capture onlt video
-    LFLiveInputAudio,           //< only audio (External input audio)
-    LFLiveInputVideo,           //< only video (External input video)
+typedef NS_ENUM(NSInteger, LFLiveCaptureType) {
+    LFLiveCaptureAudio, // capture only audio
+    LFLiveCaptureVideo, // capture onlt video
+    LFLiveInputAudio,   // only audio (External input audio)
+    LFLiveInputVideo,   // only video (External input video)
 };
 
-
-///< 用来控制采集类型（可以内部采集也可以外部传入等各种组合，支持单音频与单视频,外部输入适用于录屏，无人机等外设介入）
-typedef NS_ENUM(NSInteger,LFLiveCaptureTypeMask) {
-    LFLiveCaptureMaskAudio = (1 << LFLiveCaptureAudio),                                 ///< only inner capture audio (no video)
-    LFLiveCaptureMaskVideo = (1 << LFLiveCaptureVideo),                                 ///< only inner capture video (no audio)
-    LFLiveInputMaskAudio = (1 << LFLiveInputAudio),                                     ///< only outer input audio (no video)
-    LFLiveInputMaskVideo = (1 << LFLiveInputVideo),                                     ///< only outer input video (no audio)
-    LFLiveCaptureMaskAll = (LFLiveCaptureMaskAudio | LFLiveCaptureMaskVideo),           ///< inner capture audio and video
-    LFLiveInputMaskAll = (LFLiveInputMaskAudio | LFLiveInputMaskVideo),                 ///< outer input audio and video(method see pushVideo and pushAudio)
-    LFLiveCaptureMaskAudioInputVideo = (LFLiveCaptureMaskAudio | LFLiveInputMaskVideo), ///< inner capture audio and outer input video(method pushVideo and setRunning)
-    LFLiveCaptureMaskVideoInputAudio = (LFLiveCaptureMaskVideo | LFLiveInputMaskAudio), ///< inner capture video and outer input audio(method pushAudio and setRunning)
-    LFLiveCaptureDefaultMask = LFLiveCaptureMaskAll                                     ///< default is inner capture audio and video
+/// 用来控制采集类型（可以内部采集也可以外部传入等各种组合，支持单音频与单视频,外部输入适用于录屏，无人机等外设介入）
+typedef NS_ENUM(NSInteger, LFLiveCaptureTypeMask) {
+    LFLiveCaptureMaskAudio = (1 << LFLiveCaptureAudio),                                 /// only inner capture audio (no video)
+    LFLiveCaptureMaskVideo = (1 << LFLiveCaptureVideo),                                 /// only inner capture video (no audio)
+    LFLiveInputMaskAudio = (1 << LFLiveInputAudio),                                     /// only outer input audio (no video)
+    LFLiveInputMaskVideo = (1 << LFLiveInputVideo),                                     /// only outer input video (no audio)
+    LFLiveCaptureMaskAll = (LFLiveCaptureMaskAudio | LFLiveCaptureMaskVideo),           /// inner capture audio and video
+    LFLiveInputMaskAll = (LFLiveInputMaskAudio | LFLiveInputMaskVideo),                 /// outer input audio and video(method see pushVideo and pushAudio)
+    LFLiveCaptureMaskAudioInputVideo = (LFLiveCaptureMaskAudio | LFLiveInputMaskVideo), /// inner capture audio and outer input video(method pushVideo and setRunning)
+    LFLiveCaptureMaskVideoInputAudio = (LFLiveCaptureMaskVideo | LFLiveInputMaskAudio), /// inner capture video and outer input audio(method pushAudio and setRunning)
+    LFLiveCaptureDefaultMask = LFLiveCaptureMaskAll                                     /// default is inner capture audio and video
 };
 
 @class LFLiveSession;
@@ -113,13 +110,13 @@ typedef NS_ENUM(NSInteger,LFLiveCaptureTypeMask) {
 /** The reconnectCount control reconnect count (重连次数) *.*/
 @property (nonatomic, assign) NSUInteger reconnectCount;
 
-/*** The warterMarkView control whether the watermark is displayed or not ,if set ni,will remove watermark,otherwise add. 
+/*** The warterMarkView control whether the watermark is displayed or not ,if set ni,will remove watermark,otherwise add.
  set alpha represent mix.Position relative to outVideoSize.
  *.*/
 @property (nonatomic, strong, nullable) UIView *warterMarkView;
 
 /* The currentImage is videoCapture shot */
-@property (nonatomic, strong,readonly ,nullable) UIImage *currentImage;
+@property (nonatomic, strong, readonly, nullable) UIImage *currentImage;
 
 /* The saveLocalVideo is save the local video */
 @property (nonatomic, assign) BOOL saveLocalVideo;
@@ -154,9 +151,10 @@ typedef NS_ENUM(NSInteger,LFLiveCaptureTypeMask) {
 
 /** support outer input yuv or rgb video(set LFLiveCaptureTypeMask) .*/
 - (void)pushVideo:(nullable CVPixelBufferRef)pixelBuffer;
+- (void)pushVideoBuffer:(nonnull CMSampleBufferRef)sampleBuffer;
 
 /** support outer input pcm audio(set LFLiveCaptureTypeMask) .*/
-- (void)pushAudio:(nullable NSData*)audioData;
+- (void)pushAudio:(nullable NSData *)audioData;
+- (void)pushAudioBuffer:(nonnull CMSampleBufferRef)sampleBuffer;
 
 @end
-

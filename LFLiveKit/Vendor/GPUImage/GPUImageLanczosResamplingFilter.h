@@ -2,6 +2,6 @@
 
 @interface GPUImageLanczosResamplingFilter : GPUImageTwoPassTextureSamplingFilter
 
-@property(readwrite, nonatomic) CGSize originalImageSize;
+@property (readwrite, nonatomic) CGSize originalImageSize;
 
 @end

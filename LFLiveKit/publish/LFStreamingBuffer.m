@@ -9,17 +9,17 @@
 #import "LFStreamingBuffer.h"
 #import "NSMutableArray+LFAdd.h"
 
-static const NSUInteger defaultSortBufferMaxCount = 5;///< 排序10个内
-static const NSUInteger defaultUpdateInterval = 1;///< 更新频率为1s
-static const NSUInteger defaultCallBackInterval = 5;///< 5s计时一次
-static const NSUInteger defaultSendBufferMaxCount = 600;///< 最大缓冲区为600
+static const NSUInteger defaultSortBufferMaxCount = 5;   /// 排序10个内
+static const NSUInteger defaultUpdateInterval = 1;       /// 更新频率为1s
+static const NSUInteger defaultCallBackInterval = 5;     /// 5s计时一次
+static const NSUInteger defaultSendBufferMaxCount = 600; /// 最大缓冲区为600
 
-@interface LFStreamingBuffer (){
+@interface LFStreamingBuffer () {
     dispatch_semaphore_t _lock;
 }
 
-@property (nonatomic, strong) NSMutableArray <LFFrame *> *sortList;
-@property (nonatomic, strong, readwrite) NSMutableArray <LFFrame *> *list;
+@property (nonatomic, strong) NSMutableArray<LFFrame *> *sortList;
+@property (nonatomic, strong, readwrite) NSMutableArray<LFFrame *> *list;
 @property (nonatomic, strong) NSMutableArray *thresholdList;
 
 /** 处理buffer缓冲区情况 */
@@ -32,9 +32,10 @@ static const NSUInteger defaultSendBufferMaxCount = 600;///< 最大缓冲区为6
 
 @implementation LFStreamingBuffer
 
-- (instancetype)init {
+- (instancetype)init
+{
     if (self = [super init]) {
-        
+
         _lock = dispatch_semaphore_create(1);
         self.updateInterval = defaultUpdateInterval;
         self.callBackInterval = defaultCallBackInterval;
@@ -45,12 +46,15 @@ static const NSUInteger defaultSendBufferMaxCount = 600;///< 最大缓冲区为6
     return self;
 }
 
-- (void)dealloc {
+- (void)dealloc
+{
 }
 
-#pragma mark -- Custom
-- (void)appendObject:(LFFrame *)frame {
-    if (!frame) return;
+#pragma mark-- Custom
+- (void)appendObject:(LFFrame *)frame
+{
+    if (!frame)
+        return;
     if (!_startTimer) {
         _startTimer = YES;
         [self tick];
@@ -60,53 +64,59 @@ static const NSUInteger defaultSendBufferMaxCount = 600;///< 最大缓冲区为6
     if (self.sortList.count < defaultSortBufferMaxCount) {
         [self.sortList addObject:frame];
     } else {
-        ///< 排序
+        /// 排序
         [self.sortList addObject:frame];
-		[self.sortList sortUsingFunction:frameDataCompare context:nil];
+        [self.sortList sortUsingFunction:frameDataCompare context:nil];
         /// 丢帧
         [self removeExpireFrame];
         /// 添加至缓冲区
         LFFrame *firstFrame = [self.sortList lfPopFirstObject];
 
-        if (firstFrame) [self.list addObject:firstFrame];
+        if (firstFrame)
+            [self.list addObject:firstFrame];
     }
     dispatch_semaphore_signal(_lock);
 }
 
-- (LFFrame *)popFirstObject {
+- (LFFrame *)popFirstObject
+{
     dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
     LFFrame *firstFrame = [self.list lfPopFirstObject];
     dispatch_semaphore_signal(_lock);
     return firstFrame;
 }
 
-- (void)removeAllObject {
+- (void)removeAllObject
+{
     dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
     [self.list removeAllObjects];
     dispatch_semaphore_signal(_lock);
 }
 
-- (void)removeExpireFrame {
-    if (self.list.count < self.maxCount) return;
+- (void)removeExpireFrame
+{
+    if (self.list.count < self.maxCount)
+        return;
 
-    NSArray *pFrames = [self expirePFrames];///< 第一个P到第一个I之间的p帧
+    NSArray *pFrames = [self expirePFrames]; /// 第一个P到第一个I之间的p帧
     self.lastDropFrames += [pFrames count];
     if (pFrames && pFrames.count > 0) {
         [self.list removeObjectsInArray:pFrames];
         return;
     }
-    
-    NSArray *iFrames = [self expireIFrames];///<  删除一个I帧（但一个I帧可能对应多个nal）
+
+    NSArray *iFrames = [self expireIFrames]; ///  删除一个I帧（但一个I帧可能对应多个nal）
     self.lastDropFrames += [iFrames count];
     if (iFrames && iFrames.count > 0) {
         [self.list removeObjectsInArray:iFrames];
         return;
     }
-    
+
     [self.list removeAllObjects];
 }
 
-- (NSArray *)expirePFrames {
+- (NSArray *)expirePFrames
+{
     NSMutableArray *pframes = [[NSMutableArray alloc] init];
     for (NSInteger index = 0; index < self.list.count; index++) {
         LFFrame *frame = [self.list objectAtIndex:index];
@@ -122,13 +132,15 @@ static const NSUInteger defaultSendBufferMaxCount = 600;///< 最大缓冲区为6
     return pframes;
 }
 
-- (NSArray *)expireIFrames {
+- (NSArray *)expireIFrames
+{
     NSMutableArray *iframes = [[NSMutableArray alloc] init];
     uint64_t timeStamp = 0;
     for (NSInteger index = 0; index < self.list.count; index++) {
         LFFrame *frame = [self.list objectAtIndex:index];
         if ([frame isKindOfClass:[LFVideoFrame class]] && ((LFVideoFrame *)frame).isKeyFrame) {
-            if (timeStamp != 0 && timeStamp != frame.timestamp) break;
+            if (timeStamp != 0 && timeStamp != frame.timestamp)
+                break;
             [iframes addObject:frame];
             timeStamp = frame.timestamp;
         }
@@ -136,7 +148,8 @@ static const NSUInteger defaultSendBufferMaxCount = 600;///< 最大缓冲区为6
     return iframes;
 }
 
-NSInteger frameDataCompare(id obj1, id obj2, void *context){
+NSInteger frameDataCompare(id obj1, id obj2, void *context)
+{
     LFFrame *frame1 = (LFFrame *)obj1;
     LFFrame *frame2 = (LFFrame *)obj2;
 
@@ -147,7 +160,8 @@ NSInteger frameDataCompare(id obj1, id obj2, void *context){
     return NSOrderedAscending;
 }
 
-- (LFLiveBuffferState)currentBufferState {
+- (LFLiveBuffferState)currentBufferState
+{
     NSInteger currentCount = 0;
     NSInteger increaseCount = 0;
     NSInteger decreaseCount = 0;
@@ -155,7 +169,7 @@ NSInteger frameDataCompare(id obj1, id obj2, void *context){
     for (NSNumber *number in self.thresholdList) {
         if (number.integerValue > currentCount) {
             increaseCount++;
-        } else{
+        } else {
             decreaseCount++;
         }
         currentCount = [number integerValue];
@@ -168,41 +182,45 @@ NSInteger frameDataCompare(id obj1, id obj2, void *context){
     if (decreaseCount >= self.callBackInterval) {
         return LFLiveBuffferDecline;
     }
-    
+
     return LFLiveBuffferUnknown;
 }
 
-#pragma mark -- Setter Getter
-- (NSMutableArray *)list {
+#pragma mark-- Setter Getter
+- (NSMutableArray *)list
+{
     if (!_list) {
         _list = [[NSMutableArray alloc] init];
     }
     return _list;
 }
 
-- (NSMutableArray *)sortList {
+- (NSMutableArray *)sortList
+{
     if (!_sortList) {
         _sortList = [[NSMutableArray alloc] init];
     }
     return _sortList;
 }
 
-- (NSMutableArray *)thresholdList {
+- (NSMutableArray *)thresholdList
+{
     if (!_thresholdList) {
         _thresholdList = [[NSMutableArray alloc] init];
     }
     return _thresholdList;
 }
 
-#pragma mark -- 采样
-- (void)tick {
+#pragma mark-- 采样
+- (void)tick
+{
     /** 采样 3个阶段   如果网络都是好或者都是差给回调 */
     _currentInterval += self.updateInterval;
 
     dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
     [self.thresholdList addObject:@(self.list.count)];
     dispatch_semaphore_signal(_lock);
-    
+
     if (self.currentInterval >= self.callBackInterval) {
         LFLiveBuffferState state = [self currentBufferState];
         if (state == LFLiveBuffferIncrease) {

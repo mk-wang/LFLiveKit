@@ -68,7 +68,8 @@
 #include <polarssl/havege.h>
 #include <polarssl/net.h>
 #include <polarssl/ssl.h>
-typedef struct tls_ctx {
+typedef struct tls_ctx
+{
     havege_state hs;
     ssl_session ssn;
 } tls_ctx;
@@ -92,7 +93,8 @@ typedef struct tls_ctx {
 
 #elif defined(USE_GNUTLS)
 #include <gnutls/gnutls.h>
-typedef struct tls_ctx {
+typedef struct tls_ctx
+{
     gnutls_certificate_credentials_t cred;
     gnutls_priority_t prios;
 } tls_ctx;

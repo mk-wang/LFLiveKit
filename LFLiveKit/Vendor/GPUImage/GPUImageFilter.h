@@ -2,16 +2,17 @@
 
 #define STRINGIZE(x) #x
 #define STRINGIZE2(x) STRINGIZE(x)
-#define SHADER_STRING(text) @ STRINGIZE2(text)
+#define SHADER_STRING(text) @STRINGIZE2(text)
 
 #define GPUImageHashIdentifier #
 #define GPUImageWrappedLabel(x) x
-#define GPUImageEscapedHashIdentifier(a) GPUImageWrappedLabel(GPUImageHashIdentifier)a
+#define GPUImageEscapedHashIdentifier(a) GPUImageWrappedLabel(GPUImageHashIdentifier) a
 
 extern NSString *const kGPUImageVertexShaderString;
 extern NSString *const kGPUImagePassthroughFragmentShaderString;
 
-struct GPUVector4 {
+struct GPUVector4
+{
     GLfloat one;
     GLfloat two;
     GLfloat three;
@@ -19,14 +20,16 @@ struct GPUVector4 {
 };
 typedef struct GPUVector4 GPUVector4;
 
-struct GPUVector3 {
+struct GPUVector3
+{
     GLfloat one;
     GLfloat two;
     GLfloat three;
 };
 typedef struct GPUVector3 GPUVector3;
 
-struct GPUMatrix4x4 {
+struct GPUMatrix4x4
+{
     GPUVector4 one;
     GPUVector4 two;
     GPUVector4 three;
@@ -34,7 +37,8 @@ struct GPUMatrix4x4 {
 };
 typedef struct GPUMatrix4x4 GPUMatrix4x4;
 
-struct GPUMatrix3x3 {
+struct GPUMatrix3x3
+{
     GPUVector3 one;
     GPUVector3 two;
     GPUVector3 three;
@@ -42,38 +46,37 @@ struct GPUMatrix3x3 {
 typedef struct GPUMatrix3x3 GPUMatrix3x3;
 
 /** GPUImage's base filter class
- 
+
  Filters and other subsequent elements in the chain conform to the GPUImageInput protocol, which lets them take in the supplied or processed texture from the previous link in the chain and do something with it. Objects one step further down the chain are considered targets, and processing can be branched by adding multiple targets to a single output or filter.
  */
-@interface GPUImageFilter : GPUImageOutput <GPUImageInput>
-{
+@interface GPUImageFilter : GPUImageOutput <GPUImageInput> {
     GPUImageFramebuffer *firstInputFramebuffer;
-    
+
     GLProgram *filterProgram;
     GLint filterPositionAttribute, filterTextureCoordinateAttribute;
     GLint filterInputTextureUniform;
     GLfloat backgroundColorRed, backgroundColorGreen, backgroundColorBlue, backgroundColorAlpha;
-    
+
     BOOL isEndProcessing;
 
     CGSize currentFilterSize;
     GPUImageRotationMode inputRotation;
-    
+
     BOOL currentlyReceivingMonochromeInput;
-    
+
     NSMutableDictionary *uniformStateRestorationBlocks;
     dispatch_semaphore_t imageCaptureSemaphore;
 }
 
-@property(readonly) CVPixelBufferRef renderTarget;
-@property(readwrite, nonatomic) BOOL preventRendering;
-@property(readwrite, nonatomic) BOOL currentlyReceivingMonochromeInput;
+@property (readonly) CVPixelBufferRef renderTarget;
+@property (readwrite, nonatomic) BOOL preventRendering;
+@property (readwrite, nonatomic) BOOL currentlyReceivingMonochromeInput;
 
 /// @name Initialization and teardown
 
 /**
  Initialize with vertex and fragment shaders
- 
+
  You make take advantage of the SHADER_STRING macro to write your shaders in-line.
  @param vertexShaderString Source code of the vertex shader to use
  @param fragmentShaderString Source code of the fragment shader to use
@@ -82,7 +85,7 @@ typedef struct GPUMatrix3x3 GPUMatrix3x3;
 
 /**
  Initialize with a fragment shader
- 
+
  You may take advantage of the SHADER_STRING macro to write your shader in-line.
  @param fragmentShaderString Source code of fragment shader to use
  */
@@ -116,7 +119,7 @@ typedef struct GPUMatrix3x3 GPUMatrix3x3;
 - (void)setPoint:(CGPoint)newPoint forUniformName:(NSString *)uniformName;
 - (void)setFloatVec3:(GPUVector3)newVec3 forUniformName:(NSString *)uniformName;
 - (void)setFloatVec4:(GPUVector4)newVec4 forUniform:(NSString *)uniformName;
-- (void)setFloatArray:(GLfloat *)array length:(GLsizei)count forUniform:(NSString*)uniformName;
+- (void)setFloatArray:(GLfloat *)array length:(GLsizei)count forUniform:(NSString *)uniformName;
 
 - (void)setMatrix3f:(GPUMatrix3x3)matrix forUniform:(GLint)uniform program:(GLProgram *)shaderProgram;
 - (void)setMatrix4f:(GPUMatrix4x4)matrix forUniform:(GLint)uniform program:(GLProgram *)shaderProgram;

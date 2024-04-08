@@ -8,7 +8,7 @@
 
 #import "LFAudioEncoding.h"
 
-@interface LFHardwareAudioEncoder : NSObject<LFAudioEncoding>
+@interface LFHardwareAudioEncoder : NSObject <LFAudioEncoding>
 
 #pragma mark - Initializer
 ///=============================================================================

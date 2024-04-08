@@ -8,7 +8,7 @@
 
 #import "LFVideoEncoding.h"
 
-@interface LFHardwareVideoEncoder : NSObject<LFVideoEncoding>
+@interface LFHardwareVideoEncoder : NSObject <LFVideoEncoding>
 
 #pragma mark - Initializer
 ///=============================================================================
