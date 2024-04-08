@@ -11,7 +11,8 @@
 @implementation FirstViewController
 
 - (void)commonInit {
-    self.server = @"rtmp://192.168.226.203/hls/ios";
+//    self.server = @"rtmp://192.168.226.203/hls/ios";
+    self.server = @"rtmp://127.0.0.1/hls/ios";
 }
 
 @end

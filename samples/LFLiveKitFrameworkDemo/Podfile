@@ -1,6 +1,19 @@
 source 'https://github.com/CocoaPods/Specs.git'
-platform :ios,'7.0'
+platform :ios,'12.0'
+use_frameworks! :linkage => :static
 
 target “LFLiveKitFrameworkDemo” do
-    pod 'LFLiveKit', :path => '../../.'
+	pod 'LFLiveKit', :path => '../../.'
+	pod 'ZLMediaKit', :path => '../../ZLMediaKit'
 end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings.delete 'IPHONEOS_DEPLOYMENT_TARGET'
+      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+      config.build_settings['CODE_SIGN_IDENTITY'] = ''
+    end
+  end
+end
+

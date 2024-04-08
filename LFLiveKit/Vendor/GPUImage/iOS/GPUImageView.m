@@ -232,17 +232,22 @@
 
 - (void)recalculateViewGeometry;
 {
+    CGRect selfBounds = self.bounds;
+    
+    GPUImageFillModeType fillMode = self.fillMode;
+    CGSize imageSize = inputImageSize;
+    __weak typeof(self)weakSelf = self;
     runSynchronouslyOnVideoProcessingQueue(^{
         CGFloat heightScaling, widthScaling;
         
-        CGSize currentViewSize = self.bounds.size;
+        CGSize currentViewSize = selfBounds.size;
         
         //    CGFloat imageAspectRatio = inputImageSize.width / inputImageSize.height;
         //    CGFloat viewAspectRatio = currentViewSize.width / currentViewSize.height;
         
-        CGRect insetRect = AVMakeRectWithAspectRatioInsideRect(inputImageSize, self.bounds);
+        CGRect insetRect = AVMakeRectWithAspectRatioInsideRect(imageSize, selfBounds);
         
-        switch(_fillMode)
+        switch(fillMode)
         {
             case kGPUImageFillModeStretch:
             {
@@ -261,7 +266,8 @@
                 heightScaling = currentViewSize.width / insetRect.size.width;
             }; break;
         }
-        
+        __strong __typeof(weakSelf)strongSelf = weakSelf;
+        GLfloat *imageVertices = (GLfloat *)(&(strongSelf->imageVertices));
         imageVertices[0] = -widthScaling;
         imageVertices[1] = -heightScaling;
         imageVertices[2] = widthScaling;

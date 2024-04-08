@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "MediaServer.h"
 
 @interface AppDelegate ()
 
@@ -17,6 +18,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    [MediaServer.sharedInstance start];
+    
     return YES;
 }
 

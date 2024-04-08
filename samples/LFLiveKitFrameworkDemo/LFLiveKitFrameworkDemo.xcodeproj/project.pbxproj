@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		33D50D3762D4094CF699422E /* libPods-LFLiveKitFrameworkDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F8BC7E99B485E5C62C6E501 /* libPods-LFLiveKitFrameworkDemo.a */; };
+		7319D0B2856206EC4AB280AC /* Pods_LFLiveKitFrameworkDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 795072013F46131E1E26EABF /* Pods_LFLiveKitFrameworkDemo.framework */; };
 		8495F6B01DB8F37300542124 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8495F6AF1DB8F37300542124 /* main.m */; };
 		8495F6B31DB8F37300542124 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8495F6B21DB8F37300542124 /* AppDelegate.m */; };
 		8495F6B61DB8F37300542124 /* FirstViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8495F6B51DB8F37300542124 /* FirstViewController.m */; };
@@ -48,8 +48,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0F8BC7E99B485E5C62C6E501 /* libPods-LFLiveKitFrameworkDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LFLiveKitFrameworkDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		551FD083B5C2679528D42844 /* Pods-LFLiveKitFrameworkDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LFLiveKitFrameworkDemo.debug.xcconfig"; path = "Target Support Files/Pods-LFLiveKitFrameworkDemo/Pods-LFLiveKitFrameworkDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		795072013F46131E1E26EABF /* Pods_LFLiveKitFrameworkDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LFLiveKitFrameworkDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8495F6AB1DB8F37300542124 /* LFLiveKitFrameworkDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LFLiveKitFrameworkDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8495F6AF1DB8F37300542124 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		8495F6B11DB8F37300542124 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -86,7 +85,8 @@
 		84D0036D1DB8F86D00560583 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		84D003701DB8F8BD00560583 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		84D003721DB8F8C200560583 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		B15BA2ADA58B8E691C79FADF /* Pods-LFLiveKitFrameworkDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LFLiveKitFrameworkDemo.release.xcconfig"; path = "Target Support Files/Pods-LFLiveKitFrameworkDemo/Pods-LFLiveKitFrameworkDemo.release.xcconfig"; sourceTree = "<group>"; };
+		896CB8219342D22DE5AD8C9F /* Pods-LFLiveKitFrameworkDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LFLiveKitFrameworkDemo.debug.xcconfig"; path = "Target Support Files/Pods-LFLiveKitFrameworkDemo/Pods-LFLiveKitFrameworkDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		96EC16FBA9BCB8F486EA71F7 /* Pods-LFLiveKitFrameworkDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LFLiveKitFrameworkDemo.release.xcconfig"; path = "Target Support Files/Pods-LFLiveKitFrameworkDemo/Pods-LFLiveKitFrameworkDemo.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,7 +99,7 @@
 				84D0036E1DB8F86D00560583 /* AVFoundation.framework in Frameworks */,
 				84D0036C1DB8F86700560583 /* AudioToolbox.framework in Frameworks */,
 				84D0036A1DB8F85E00560583 /* VideoToolbox.framework in Frameworks */,
-				33D50D3762D4094CF699422E /* libPods-LFLiveKitFrameworkDemo.a in Frameworks */,
+				7319D0B2856206EC4AB280AC /* Pods_LFLiveKitFrameworkDemo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -109,8 +109,8 @@
 		30C0D19928F1C77BFA04D2B7 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				551FD083B5C2679528D42844 /* Pods-LFLiveKitFrameworkDemo.debug.xcconfig */,
-				B15BA2ADA58B8E691C79FADF /* Pods-LFLiveKitFrameworkDemo.release.xcconfig */,
+				896CB8219342D22DE5AD8C9F /* Pods-LFLiveKitFrameworkDemo.debug.xcconfig */,
+				96EC16FBA9BCB8F486EA71F7 /* Pods-LFLiveKitFrameworkDemo.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -175,7 +175,7 @@
 				84D003651DB8F84000560583 /* libresolv.tbd */,
 				8495F6D51DB8F49800542124 /* GPUImage.framework */,
 				8495F6D61DB8F49800542124 /* pili-librtmp.framework */,
-				0F8BC7E99B485E5C62C6E501 /* libPods-LFLiveKitFrameworkDemo.a */,
+				795072013F46131E1E26EABF /* Pods_LFLiveKitFrameworkDemo.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -214,7 +214,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8495F6C51DB8F37300542124 /* Build configuration list for PBXNativeTarget "LFLiveKitFrameworkDemo" */;
 			buildPhases = (
-				8B182AB93BCECC3980CD0DD7 /* [CP] Check Pods Manifest.lock */,
+				82AB44C09693A6D2647D0488 /* [CP] Check Pods Manifest.lock */,
 				8495F6A71DB8F37300542124 /* Sources */,
 				8495F6A81DB8F37300542124 /* Frameworks */,
 				8495F6A91DB8F37300542124 /* Resources */,
@@ -287,7 +287,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		8B182AB93BCECC3980CD0DD7 /* [CP] Check Pods Manifest.lock */ = {
+		82AB44C09693A6D2647D0488 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -438,10 +438,11 @@
 		};
 		8495F6C61DB8F37300542124 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 551FD083B5C2679528D42844 /* Pods-LFLiveKitFrameworkDemo.debug.xcconfig */;
+			baseConfigurationReference = 896CB8219342D22DE5AD8C9F /* Pods-LFLiveKitFrameworkDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 5KC8JMR7MN;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = LFLiveKitFrameworkDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -452,7 +453,7 @@
 		};
 		8495F6C71DB8F37300542124 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B15BA2ADA58B8E691C79FADF /* Pods-LFLiveKitFrameworkDemo.release.xcconfig */;
+			baseConfigurationReference = 96EC16FBA9BCB8F486EA71F7 /* Pods-LFLiveKitFrameworkDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 5KC8JMR7MN;
