@@ -221,10 +221,8 @@
 #pragma mark -
 #pragma mark Handling fill mode
 
-- (void)recalculateViewGeometry;
+- (void)recalculateViewGeometry:(CGRect)selfBounds
 {
-    CGRect selfBounds = self.bounds;
-
     GPUImageFillModeType fillMode = self.fillMode;
     CGSize imageSize = inputImageSize;
     __weak typeof(self) weakSelf = self;
@@ -264,13 +262,16 @@
         imageVertices[6] = widthScaling;
         imageVertices[7] = heightScaling;
     });
+}
 
-    //    static const GLfloat imageVertices[] = {
-    //        -1.0f, -1.0f,
-    //        1.0f, -1.0f,
-    //        -1.0f,  1.0f,
-    //        1.0f,  1.0f,
-    //    };
+- (void)recalculateViewGeometry;
+{
+    __weak __typeof(self) weakSelf = self;
+    runAsynchronouslyOnMainQueue(^{
+        __strong __typeof(weakSelf) strongSelf = weakSelf;
+        CGRect rect = strongSelf.bounds;
+        [strongSelf recalculateViewGeometry:rect];
+    });
 }
 
 - (void)setBackgroundColorRed:(GLfloat)redComponent green:(GLfloat)greenComponent blue:(GLfloat)blueComponent alpha:(GLfloat)alphaComponent;
@@ -443,6 +444,7 @@
 
 - (void)setInputSize:(CGSize)newSize atIndex:(NSInteger)textureIndex;
 {
+    __weak __typeof(self) weakSelf = self;
     runSynchronouslyOnVideoProcessingQueue(^{
         CGSize rotatedSize = newSize;
 
@@ -453,7 +455,8 @@
 
         if (!CGSizeEqualToSize(inputImageSize, rotatedSize)) {
             inputImageSize = rotatedSize;
-            [self recalculateViewGeometry];
+
+            [weakSelf recalculateViewGeometry];
         }
     });
 }

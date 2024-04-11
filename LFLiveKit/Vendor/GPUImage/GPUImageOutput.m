@@ -22,6 +22,15 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
     }
 }
 
+void runAsynchronouslyOnMainQueue(void (^block)(void))
+{
+    if ([NSThread isMainThread]) {
+        block();
+    } else {
+        dispatch_async(dispatch_get_main_queue(), block);
+    }
+}
+
 void runSynchronouslyOnVideoProcessingQueue(void (^block)(void))
 {
     dispatch_queue_t videoProcessingQueue = [GPUImageContext sharedContextQueue];

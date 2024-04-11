@@ -91,14 +91,18 @@
     if (_running == running)
         return;
     _running = running;
+    
+    BOOL idleTimerDisabled = _running;
+    
+    runAsynchronouslyOnMainQueue(^{
+        [UIApplication sharedApplication].idleTimerDisabled = idleTimerDisabled;
+    });
 
     if (!_running) {
-        [UIApplication sharedApplication].idleTimerDisabled = NO;
         [self.videoCamera stopCameraCapture];
         if (self.saveLocalVideo)
             [self.movieWriter finishRecording];
     } else {
-        [UIApplication sharedApplication].idleTimerDisabled = YES;
         [self reloadFilter];
         [self.videoCamera startCameraCapture];
         if (self.saveLocalVideo)

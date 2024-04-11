@@ -22,7 +22,7 @@ typedef NS_ENUM(NSUInteger, LFLiveVideoSessionPreset) {
 CGSize videoSizeOf(LFLiveVideoSessionPreset prsent);
 AVCaptureSessionPreset avSessionPresetOf(LFLiveVideoSessionPreset prsent);
 
-typedef struct _LFLiveVideoQuality
+typedef struct
 {
     BOOL high;
     LFLiveVideoSessionPreset preset;
