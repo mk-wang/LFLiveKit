@@ -91,10 +91,10 @@
     if (_running == running)
         return;
     _running = running;
-    
+
     BOOL idleTimerDisabled = _running;
-    
-    runAsynchronouslyOnMainQueue(^{
+
+    dispatch_main_async_safe(^{
         [UIApplication sharedApplication].idleTimerDisabled = idleTimerDisabled;
     });
 
@@ -307,14 +307,16 @@
 }
 
 #pragma mark-- Custom Method
+
 - (void)processVideo:(GPUImageOutput *)output
 {
-    __weak typeof(self) _self = self;
-    @autoreleasepool {
-        GPUImageFramebuffer *imageFramebuffer = output.framebufferForOutput;
-        CVPixelBufferRef pixelBuffer = [imageFramebuffer pixelBuffer];
-        if (pixelBuffer && _self.delegate && [_self.delegate respondsToSelector:@selector(captureOutput:pixelBuffer:)]) {
-            [_self.delegate captureOutput:_self pixelBuffer:pixelBuffer];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(captureOutput:pixelBuffer:)]) {
+        @autoreleasepool {
+            GPUImageFramebuffer *imageFramebuffer = output.framebufferForOutput;
+            CVPixelBufferRef pixelBuffer = [imageFramebuffer pixelBuffer];
+            if (pixelBuffer != NULL) {
+                [self.delegate captureOutput:self pixelBuffer:pixelBuffer];
+            }
         }
     }
 }

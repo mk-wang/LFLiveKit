@@ -267,7 +267,7 @@
 - (void)recalculateViewGeometry;
 {
     __weak __typeof(self) weakSelf = self;
-    runAsynchronouslyOnMainQueue(^{
+    dispatch_main_async_safe(^{
         __strong __typeof(weakSelf) strongSelf = weakSelf;
         CGRect rect = strongSelf.bounds;
         [strongSelf recalculateViewGeometry:rect];

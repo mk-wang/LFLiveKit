@@ -17,9 +17,17 @@ typedef NS_ENUM(NSInteger, UIImageOrientation) {
 };
 #endif
 
+#ifndef dispatch_main_async_safe
+#define dispatch_main_async_safe(block)                                                                                  \
+    if (dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL) == dispatch_queue_get_label(dispatch_get_main_queue())) { \
+        block();                                                                                                         \
+    } else {                                                                                                             \
+        dispatch_async(dispatch_get_main_queue(), block);                                                                \
+    }
+#endif
+
 dispatch_queue_attr_t GPUImageDefaultQueueAttribute(void);
 void runOnMainQueueWithoutDeadlocking(void (^block)(void));
-void runAsynchronouslyOnMainQueue(void (^block)(void));
 void runSynchronouslyOnVideoProcessingQueue(void (^block)(void));
 void runAsynchronouslyOnVideoProcessingQueue(void (^block)(void));
 void runSynchronouslyOnContextQueue(GPUImageContext *context, void (^block)(void));
